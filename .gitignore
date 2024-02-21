@@ -1,0 +1,6 @@
+__pycache__
+model
+*.pth
+*.jpg
+*.png
+*.npy

@@ -18,24 +18,20 @@ import numpy as np
 import math
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm, trange
-from config import dir_path, model_path
+import config
+from config import dir_path, model_path, upsampler
 from utils import iou
-from train_dataloader import tFUSFormer5chDataset, DataLoader, train_ds, valid_ds, train_dl, valid_dl
-
+from dataloader_tFUSFormer5ch import tFUSFormer5chDataset, DataLoader, train_ds, valid_ds, test_ds, train_dl, valid_dl, test_dl
 from models import tFUSFormer_5ch
+from time import sleep
 # import EarlyStopping
 #from pytorchtools import EarlyStopping
 
-from time import sleep
-#import collections.abc
-#from itertools import repeat
-
+upsampler = config.upsampler
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_func = nn.MSELoss()    
 
-#model = tFUSFormer_5ch(upsampler='pixelshuffle').to(device)
-model = tFUSFormer_5ch(upsampler='pixelshuffledirect').to(device)
-#model = tFUSFormer_5ch(upsampler='nearest+conv').to(device)
+model = tFUSFormer_5ch(upsampler=upsampler).to(device)
 
 def train(model, data_dl):
     model.train()
@@ -52,9 +48,7 @@ def train(model, data_dl):
 
         optimizer.zero_grad()
         outputs = model(P,S,Vx,Vy,Vz) #SR
-        #print('output size ',outputs.size()) # Why 4 1 50 50 50 ???????
-        #print('HR size ',label.size())   #     4 1 100 100 100
-        #print(torch.max(outputs))
+
         loss = loss_func(outputs, label)
         #loss2 = loss_func2(outputs, label)
         #loss = loss1 + loss2
@@ -74,7 +68,6 @@ def train(model, data_dl):
 
 # validation
 def validate(model, data_dl, epoch):
-
     model.eval()
     running_loss = 0.0
     running_iou = 0.0
@@ -86,7 +79,7 @@ def validate(model, data_dl, epoch):
             Vy = data[3].to(device)
             Vz = data[4].to(device)
             label = data[5].to(device)
-
+        
             outputs = model(P,S,Vx,Vy,Vz)
             loss = loss_func(outputs, label)
             #loss2 = loss_func2(outputs, label)
@@ -103,10 +96,10 @@ def validate(model, data_dl, epoch):
 
     return final_loss, final_iou
 
+num_epochs = config.num_epochs
 optimizer = optim.Adam(model.parameters(), lr=0.0002)
 #optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 #optimizer = optim.Adam(model.parameters(), lr=0.000005)
-num_epochs = 2 #100 # 51 done
 
 # train
 train_loss, val_loss = [], []

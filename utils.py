@@ -169,18 +169,17 @@ class PixelShuffle3d(nn.Module):
         '''
         :param scale: upsample scale
         '''
-        super().__init__()
+        super(PixelShuffle3d, self).__init__()
         self.scale = scale
 
     def forward(self, input):
         batch_size, channels, in_height, in_width, in_depth = input.size()            
-        nOut = channels // self.scale ** 3
+        nOut = channels // (self.scale ** 3)
         out_height = in_height * self.scale
         out_width  = in_width  * self.scale
         out_depth  = in_depth  * self.scale
         
-        input_view = input.contiguous().view(batch_size, nOut, self.scale, self.scale, self.scale, in_height, in_width, in_depth)
-
+        input_view = input.view(batch_size, nOut, self.scale, self.scale, self.scale, in_height, in_width, in_depth)
         output = input_view.permute(0, 1, 5, 2, 6, 3, 7, 4).contiguous()
 
         return output.view(batch_size, nOut, out_height, out_width, out_depth)
@@ -713,29 +712,27 @@ class PatchUnEmbed3D(nn.Module):
         super().__init__()
         img_size = to_3tuple(img_size)
         patch_size = to_3tuple(patch_size)
-        patches_resolution = patches_resolution = [img_size[0] // patch_size[0], img_size[1] // patch_size[1], img_size[2]//patch_size[2]]
         self.img_size = img_size
-        self.patch_size = patch_size
-        self.patches_resolution = patches_resolution
-        self.num_patches = patches_resolution[0] * patches_resolution[1]* patches_resolution[2]
-
+        self.patch_size = patch_size        
+        self.patches_resolution = patches_resolution = [img_size[0] // patch_size[0], img_size[1] // patch_size[1], img_size[2]//patch_size[2]]
+        self.num_patches = np.prod(self.patches_resolution)
         self.in_chans = in_chans
         self.embed_dim = embed_dim
-
         self.patch_size = patch_size
-
+        self.norm = norm_layer(embed_dim) if norm_layer else nn.Identity()
+  
     def forward(self, x, x_size):
         B, HWD, C = x.shape
         x = x.transpose(1, 2).view(B, self.embed_dim, x_size[0], x_size[1], x_size[2])  # B Ph*Pw*Pd C
         return x
-
+       
     def flops(self):
         flops = 0
         return flops
 
 
 class Upsample(nn.Sequential):
-    """Upsample module.
+    """Upsample module for 3D data using convolution and pixel shuffle.
     Args:
         scale (int): Scale factor. Supported scales: 2^n and 3.
         num_feat (int): Channel number of intermediate features.
@@ -756,7 +753,7 @@ class Upsample(nn.Sequential):
 
 
 class UpsampleOneStep(nn.Sequential):
-    """UpsampleOneStep module (the difference with Upsample is that it always only has 1conv + 1pixelshuffle)
+    """UpsampleOneStep module (the difference with Upsample is that it has 1conv + 1pixelshuffle)
        Used in lightweight SR to save parameters.
     Args:
         scale (int): Scale factor. Supported scales: 2^n and 3.
@@ -770,10 +767,11 @@ class UpsampleOneStep(nn.Sequential):
         m.append(nn.Conv3d(num_feat, (scale ** 3) * num_out_ch, 3, 1, 1))
         m.append(PixelShuffle3d(scale))
         super(UpsampleOneStep, self).__init__(*m)
+        self.num_feat = num_feat
+        self.input_resolution = input_resolution
 
     def flops(self):
-        H, W = self.input_resolution
-        flops = H * W * self.num_feat * 3 * 9
+        D, H, W = self.input_resolution
+        flops = 2 * D * H * W * self.num_feat * (self.scale ** 3) * num_out_ch * 27  # For 3x3x3 kernel
         return flops
-
 

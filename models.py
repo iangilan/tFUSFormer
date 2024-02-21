@@ -39,6 +39,37 @@ class tFUSFormer_5ch(nn.Module):
         img_range: Image range. 1. or 255.
         upsampler: The reconstruction reconstruction module. 'pixelshuffle'/'pixelshuffledirect'/'nearest+conv'/None
         resi_connection: The convolutional block before residual connection. '1conv'/'3conv'
+    Effects of parameters:
+	Embedding Dimension: Determines the size of the embedding vector for each patch. A higher embed_dim 
+	increases the model's capacity and potentially its ability to capture more complex features, 
+	but at the cost of higher computational requirements and memory usage.
+
+	Depth of Each Swin Transformer Layer: Specifies the number of transformer blocks in each stage of 
+	the model. Increasing the depth can improve the model's ability to learn complex representations 
+	but also significantly increases the number of parameters, computation, and the risk of overfitting.
+
+	Number of Attention Heads: Multi-head attention allows the model to focus on different parts of the 
+	input simultaneously. More heads can lead to better learning of dependencies but also increase the 
+	model's size and computational cost.
+
+	Window Size: In Swin Transformers, self-attention is computed within local windows (sub-volumes). 
+	A larger window size increases the receptive field per transformer block but also the computational 
+	complexity of the self-attention mechanism.
+
+	MLP Ratio: Dictates the size of the feed-forward network (FFN) within each transformer block relative 
+	to the embedding dimension. A higher ratio increases the capacity of the FFN but also the model size and computation.
+
+	Query/Key/Value Bias: Adding a learnable bias to the query, key, and value projections can help with 
+	learning dynamics but has a minimal impact on computational complexity.
+
+	Query/Key Scale Factor: Custom scaling of the dot product used in attention mechanisms. If not provided, 
+	it defaults to 1/sqrt(embed_dim), which is standard. Adjusting this can impact the stability and efficiency 
+	of attention computations.
+
+	Dropout Rates: Dropout rates for the embeddings and attention weights. Using dropout can help prevent 
+	overfitting by adding regularization, but setting it too high might hinder the model's ability to learn effectively.
+
+	Drop Path Rate: Stochastic depth rate for dropping entire transformer blocks, which helps in regularization and preventing overfitting. Similar to dropout, but acts on the block level.    
     """
 
     def __init__(self, img_size=25, patch_size=1, in_chans=1,
@@ -58,7 +89,7 @@ class tFUSFormer_5ch(nn.Module):
             self.mean = torch.Tensor(rgb_mean).view(1, 3, 1, 1)
         else:
             self.mean = torch.zeros(1, 1, 1, 1, 1)
-            #self.mean = torch.zeros(1, num_in_ch, 1, 1, 1) # not sure
+        
         self.upscale = upscale
         self.upsampler = upsampler
         self.window_size = window_size
@@ -146,7 +177,6 @@ class tFUSFormer_5ch(nn.Module):
             self.conv_before_upsample = nn.Sequential(nn.Conv3d(embed_dim, num_feat, 3, 1, 1),
                                                       nn.LeakyReLU(inplace=True))
             self.upsample = Upsample(upscale, num_feat)
-            #self.upsample = nn.Upsample(scale_factor=2, mode='nearest')#nn.Upsample(upscale, num_feat)
             self.conv_last = nn.Conv3d(num_feat, num_out_ch, 3, 1, 1)
         elif self.upsampler == 'pixelshuffledirect':
             self.upsample = UpsampleOneStep(upscale, embed_dim, num_out_ch,
@@ -266,6 +296,7 @@ class tFUSFormer_5ch(nn.Module):
     def forward(self, x, x2, x3, x4, x5):
         H, W, D = x.shape[2:]
         x = self.check_image_size(x)
+        
         self.mean = self.mean.type_as(x)
         self.mean2 = self.mean.type_as(x2)
         self.mean3 = self.mean.type_as(x3)

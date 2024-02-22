@@ -289,9 +289,9 @@ test_ds  = tFUSFormer5chDataset(test_P_low_scale, test_skull_low_scale, test_Vx_
 
 
 
-train_dl = DataLoader(train_ds, batch_size=batch_size)
-valid_dl = DataLoader(valid_ds, batch_size=batch_size)
-test_dl  = DataLoader(test_ds, batch_size=batch_size)
+train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
+valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=True)
+test_dl  = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
 
 '''
 ########################

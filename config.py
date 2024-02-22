@@ -9,7 +9,8 @@ alpha = 0.7
 upsample_methods = {
     "1": "pixelshuffle",
     "2": "pixelshuffledirect",
-    "3": "nearest+conv"
+    "3": "nearest+conv",
+    "4": ""
 }
 
 # Current upsample method

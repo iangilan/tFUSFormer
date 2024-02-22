@@ -73,16 +73,13 @@ class tFUSFormer_5ch(nn.Module):
     """
 
     def __init__(self, img_size=25, patch_size=1, in_chans=1,
-                 embed_dim=96, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #(96),84,72,60,36
+                 embed_dim=96, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6],
                  window_size=5, mlp_ratio=4., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, rpb=True ,patch_norm=True,
                  use_checkpoint=True, upscale=4, img_range=1., upsampler='', resi_connection='1conv',
                  output_type = "residual",num_feat=64,**kwargs):
         super(tFUSFormer_5ch, self).__init__()
-        # Initialize learnable weights for 5 channels, initialized to 1/5 to mimic averaging initially
-        self.channel_weights = nn.Parameter(torch.ones(6) / 6)
-                
         num_in_ch = in_chans
         num_out_ch = in_chans
         num_feat = num_feat
@@ -178,7 +175,7 @@ class tFUSFormer_5ch(nn.Module):
         ########################################
         if self.upsampler == 'pixelshuffle':
             self.conv_before_upsample = nn.Sequential(nn.Conv3d(embed_dim, num_feat, 3, 1, 1),
-                                                      nn.LeakyReLU(inplace=True))                                                    
+                                                      nn.LeakyReLU(inplace=True))
             self.upsample = Upsample(upscale, num_feat)
             self.conv_last = nn.Conv3d(num_feat, num_out_ch, 3, 1, 1)
         elif self.upsampler == 'pixelshuffledirect':
@@ -235,6 +232,38 @@ class tFUSFormer_5ch(nn.Module):
 
         return x
 
+#     def forward_features(self, x, x_feat):
+#         print('x.shape in forward_features (weird)',x.shape) # 4 1 50 50 50
+#         print('x_feat.shape in forward_features (weird)',x_feat.shape) # 4 96 50 50 50
+#         if self.patch_size>1:
+#             x_size = self.patches_resolution
+#             print('x_size if self.patch_size>1', x_size)
+#         else:
+#             x_size = (x.shape[2], x.shape[3], x.shape[4])
+#             print('x_size if not self.patch_size>1', x_size)
+#         print('x_size in forward_features', x_size)
+#         x_feat = self.patch_embed_features(x_feat)
+#         x_vol= self.patch_embed_volume(x)
+#         print('x_feat in forward_features!!!!!!!!!!!', x_feat)
+#         print('x_vol in forward_features!!!!!!!!!!', x_vol)
+
+#         if self.ape:
+#             x_feat = x_feat + self.absolute_pos_embed
+#             x_vol = x_vol + self.absolute_pos_embed
+#         x_feat = self.pos_drop(x_feat)
+#         x_vol = self.pos_drop(x_vol)
+
+#         for layer in self.layers:
+#             x_feat = layer(x_feat, x_size)
+#             x_vol = layer(x_vol, x_size)
+
+#         x_feat = self.norm(x_feat)
+#         x_vol = self.norm(x_vol)
+#         x_feat = self.patch_unembed(x_feat, x_size)
+#         x_vol = self.patch_unembed(x_vol, x_size)
+#         return x_feat, x_vol
+
+
     def forward_features(self, x):
         if self.patch_size>1:
             x_size = self.patches_resolution
@@ -242,38 +271,26 @@ class tFUSFormer_5ch(nn.Module):
             x_size = (x.shape[2], x.shape[3], x.shape[4])
         x_feat  = self.patch_embed_features(x)
 
+        #x_vol= self.patch_embed_volume(x)
+
         if self.ape:
             x_feat  = x_feat + self.absolute_pos_embed
-
+            #x_vol = x_vol + self.absolute_pos_embed
         x_feat = self.pos_drop(x_feat)
+        #x_vol = self.pos_drop(x_vol)
 
         for layer in self.layers:
             x_feat  = layer(x_feat, x_size)
+            #x_vol = layer(x_vol, x_size)
 
         x_feat = self.norm(x_feat)
+
+        #x_vol  = self.norm(x_vol)
         x_feat = self.patch_unembed(x_feat, x_size)
 
-        return x_feat
+        #x_vol  = self.patch_unembed(x_vol, x_size)
+        return x_feat #, x_vol
 
-    def forward_volume(self, x):
-        if self.patch_size>1:
-            x_size = self.patches_resolution
-        else:
-            x_size = (x.shape[2], x.shape[3], x.shape[4])
-        x_vol  = self.patch_embed_volume(x)
-
-        if self.ape:
-            x_vol  = x_vol + self.absolute_pos_embed
-
-        x_vol = self.pos_drop(x_vol)
-
-        for layer in self.layers:
-            x_vol  = layer(x_vol, x_size)
-
-        x_vol = self.norm(x_vol)
-        x_vol = self.patch_unembed(x_vol, x_size)
-
-        return x_vol
 
 
     def forward(self, x, x2, x3, x4, x5):
@@ -292,39 +309,21 @@ class tFUSFormer_5ch(nn.Module):
         x5 = (x5 - self.mean5) * self.img_range
 
         if self.upsampler == 'pixelshuffle': # for now only pixelshuffle works!!!
-            #x  = self.conv_first(x)
-            #x2 = self.conv_first(x2)
-            #x3 = self.conv_first(x3)
-            #x4 = self.conv_first(x4)
-            #x5 = self.conv_first(x5)
-            
-            #x_vol = self.forward_volume(x)
-            
-            #x  = self.conv_after_body(self.forward_features(x))
-            #x2 = self.conv_after_body(self.forward_features(x2))
-            #x3 = self.conv_after_body(self.forward_features(x3))
-            #x4 = self.conv_after_body(self.forward_features(x4))
-            #x5 = self.conv_after_body(self.forward_features(x5))
-            
-            x = (1.0/6.0)*(x+self.conv_after_body(self.forward_features(self.conv_first(x))) + self.conv_after_body(self.forward_features(self.conv_first(x2))) + self.conv_after_body(self.forward_features(self.conv_first(x3))) + self.conv_after_body(self.forward_features(self.conv_first(x4))) + self.conv_after_body(self.forward_features(self.conv_first(x5))))
-            print(x.size())
+            x  = self.conv_first(x)
+            x2 = self.conv_first(x2)
+            x3 = self.conv_first(x3)
+            x4 = self.conv_first(x4)
+            x5 = self.conv_first(x5)
+            #x = self.conv_after_body(self.forward_features(x)) + x
+            x = self.conv_after_body(self.forward_features(x)) + self.conv_after_body(self.forward_features(x2))
+            + self.conv_after_body(self.forward_features(x3)) + self.conv_after_body(self.forward_features(x4))
+            self.conv_after_body(self.forward_features(x5)) + + x
             x = self.conv_before_upsample(x)
-            x = self.upsample(x)
-            x = self.conv_last(x)
-            #x = self.conv_last(self.upsample(x))
+            x = self.conv_last(self.upsample(x))
 
-        elif self.upsampler == 'pixelshuffledirect': #2  
-            #x_vol = self.forward_volume(x)     
-            # Apply learned weights
-            weighted_sum = (self.channel_weights[0] * x + 
-                            self.channel_weights[1] * self.conv_after_body(self.forward_features(self.conv_first(x)))  + 
-                            self.channel_weights[2] * self.conv_after_body(self.forward_features(self.conv_first(x2))) + 
-                            self.channel_weights[3] * self.conv_after_body(self.forward_features(self.conv_first(x3))) + 
-                            self.channel_weights[4] * self.conv_after_body(self.forward_features(self.conv_first(x4))) + 
-                            self.channel_weights[5] * self.conv_after_body(self.forward_features(self.conv_first(x5))))                       
-            #print((self.forward_volume(x)).size())
-            weighted_sum = weighted_sum / self.channel_weights.sum()
-            x = x + weighted_sum
+        elif self.upsampler == 'pixelshuffledirect':
+            x = self.conv_first(x)
+            x = self.conv_after_body(self.forward_features(x)) + x
             x = self.upsample(x)
         elif self.upsampler == 'nearest+conv':
             x = self.conv_first(x)
@@ -335,28 +334,14 @@ class tFUSFormer_5ch(nn.Module):
             x = self.conv_last(self.lrelu(self.conv_hr(x)))
         else:
             x_first = self.conv_first(x)
-            x2_first = self.conv_first(x2)
-            x3_first = self.conv_first(x3)
-            x4_first = self.conv_first(x4)
-            x5_first = self.conv_first(x5)
-            res = self.conv_after_body(self.forward_features(x_first)) + x_first
-            x = x + self.conv_last(res)
-            #x = self.upsample_feat(x)
-            
-        '''           
             if self.patch_size>1:
-                x_vol = self.forward_volume(x) # not sure which one is right!!!!!!!!!!!!!!!!!!
-                x_feat = self.forward_features(x_first)
-                x2_feat = self.forward_features(x2_first)
-                x3_feat = self.forward_features(x3_first)
-                x4_feat = self.forward_features(x4_first)
-                x5_feat = self.forward_features(x5_first)
-                
-                #res_deep_feat = self.conv_after_body(x_feat)
-                #res_deep_vol = self.conv_after_body(x_vol)
-                #res_deep = (res_deep_feat + res_deep_vol)/2
-                #res = self.upsample_feat(res_deep)
-                #res = res + x_first
+                x_feat, x_vol = self.forward_features(x) # not sure which one is right!!!!!!!!!!!!!!!!!!
+                #x_feat, x_vol = self.forward_features(x_first)
+                res_deep_feat = self.conv_after_body(x_feat)
+                res_deep_vol = self.conv_after_body(x_vol)
+                res_deep = (res_deep_feat + res_deep_vol)/2
+                res = self.upsample_feat(res_deep)
+                res = res + x_first
             else:
                 res = self.conv_after_body(self.forward_features(x_first)) + x_first
                 #res = self.conv_after_body(self.forward_features(x,x_first)) + x_first
@@ -364,7 +349,7 @@ class tFUSFormer_5ch(nn.Module):
                 x = x + self.conv_last(res)
             else:
                 x = self.conv_last(self.conv_before_last(res))
-        '''
+
         x = x / self.img_range + self.mean
 
         return x[:, :, :H*self.upscale, :W*self.upscale, :D*self.upscale]

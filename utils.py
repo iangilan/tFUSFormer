@@ -676,7 +676,7 @@ class PatchEmbed3D(nn.Module):
             self.norm = norm_layer(embed_dim)
         else:
             self.norm = None
-
+    '''
     def forward(self, x):
         if self.proj:
             proj_x = self.proj(x)
@@ -689,12 +689,22 @@ class PatchEmbed3D(nn.Module):
         if self.norm is not None:
             x = self.norm(x)
         return x
-
+    '''
+    def forward(self, x):
+        if self.proj:
+            proj_x = self.proj(x)
+            x = proj_x.flatten(2).transpose(1,2)
+        else:
+            x = x.flatten(2).transpose(1, 2)  
+        if self.norm is not None:
+            x = self.norm(x)
+        return x
+    
     def flops(self):
         flops = 0
-        H, W = self.img_size
+        H, W, D = self.img_size
         if self.norm is not None:
-            flops += H * W * self.embed_dim
+            flops += H * W * D* self.embed_dim
         return flops
 
 
@@ -719,7 +729,7 @@ class PatchUnEmbed3D(nn.Module):
         self.in_chans = in_chans
         self.embed_dim = embed_dim
         self.patch_size = patch_size
-        self.norm = norm_layer(embed_dim) if norm_layer else nn.Identity()
+        #self.norm = norm_layer(embed_dim) if norm_layer else nn.Identity()
   
     def forward(self, x, x_size):
         B, HWD, C = x.shape

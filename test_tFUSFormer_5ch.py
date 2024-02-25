@@ -21,7 +21,7 @@ from tqdm import tqdm, trange
 import config
 from config import dir_path, model_path, upsampler
 from utils import iou
-from dataloader_tFUSFormer5ch import tFUSFormer5chDataset, DataLoader, train_ds, valid_ds, test_ds, train_dl, valid_dl, test_dl#, unforeseen_test_ds, unforeseen_test_dl
+from dataloader_tFUSFormer5ch import tFUSFormer5chDataset, DataLoader, train_ds, valid_ds, test_ds, train_dl, valid_dl, test_dl, unforeseen_test_ds, unforeseen_test_dl
 from dataloader_tFUSFormer5ch import scaler_Phigh, scaler_Plow, scaler_Slow, scaler_Vxlow, scaler_Vylow, scaler_Vzlow
 from models import tFUSFormer_5ch
 from time import sleep
@@ -35,7 +35,7 @@ model.eval()
 
 LR_list, HR_list, SR_list = [], [], []
 with torch.no_grad():
-    for lr, sk_lr, Vx_lr, Vy_lr, Vz_lr, hr in test_dl:
+    for lr, sk_lr, Vx_lr, Vy_lr, Vz_lr, hr in unforeseen_test_dl:
         LR_list.append(lr.squeeze(1))
         HR_list.append(hr.squeeze(1))
         SR_list.append(model(lr.to(device),sk_lr.to(device), Vx_lr.to(device), Vy_lr.to(device), Vz_lr.to(device)).squeeze(1))
@@ -114,8 +114,8 @@ for sample in range(N_test):
 
     plt.figure(figsize=(22,22))
 
-
-    folder_path = 'test_results/4x_5ch_foreseen/plot/'
+    #folder_path = 'test_results/4x_5ch_foreseen/plot/'
+    folder_path = 'test_results/4x_5ch_unforeseen/plot/'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
         
@@ -161,7 +161,8 @@ print('=================================================')
 
 #=========================================
 # Create the folder if it does not exist
-folder_path1 = 'test_results/4x_5ch_foreseen/'
+#folder_path1 = 'test_results/4x_5ch_foreseen/'
+folder_path1 = 'test_results/4x_5ch_unforeseen/'
 if not os.path.exists(folder_path1):
     os.makedirs(folder_path1)
 

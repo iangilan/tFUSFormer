@@ -20,20 +20,16 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm, trange
 import config
 from config import dir_path, model_path, upsampler
-from utils import iou, IoULoss
+from utils import iou
 from dataloader_tFUSFormer5ch import tFUSFormer5chDataset, DataLoader, train_ds, valid_ds, test_ds, train_dl, valid_dl, test_dl
 from models import tFUSFormer_5ch
 from time import sleep
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-#import EarlyStopping
+# import EarlyStopping
 #from pytorchtools import EarlyStopping
-from utils import EarlyStopping
-from pathlib import Path
 
 upsampler = config.upsampler
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_func = nn.MSELoss()    
-loss_func2 = IoULoss()
 
 model = tFUSFormer_5ch(upsampler=upsampler).to(device)
 
@@ -53,9 +49,9 @@ def train(model, data_dl):
         optimizer.zero_grad()
         outputs = model(P,S,Vx,Vy,Vz) #SR
 
-        loss1 = loss_func(outputs, label)
-        loss2 = loss_func2(outputs, label)
-        loss = config.alpha*loss1 + (1.0-config.alpha)*loss2
+        loss = loss_func(outputs, label)
+        #loss2 = loss_func2(outputs, label)
+        #loss = loss1 + loss2
         loss.backward()
         optimizer.step()
 
@@ -85,9 +81,9 @@ def validate(model, data_dl, epoch):
             label = data[5].to(device)
         
             outputs = model(P,S,Vx,Vy,Vz)
-            loss1 = loss_func(outputs, label)
-       	    loss2 = loss_func2(outputs, label)
-            loss = config.alpha*loss1 + (1.0-config.alpha)*loss2
+            loss = loss_func(outputs, label)
+            #loss2 = loss_func2(outputs, label)
+            #loss = loss1 + loss2
 
             running_loss += loss.item()
             batch_iou = iou(label,outputs)
@@ -102,7 +98,6 @@ def validate(model, data_dl, epoch):
 
 num_epochs = config.num_epochs
 optimizer = optim.Adam(model.parameters(), lr=0.0002)
-scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10, verbose=True)
 #optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 #optimizer = optim.Adam(model.parameters(), lr=0.000005)
 
@@ -110,16 +105,12 @@ scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10, ve
 train_loss, val_loss = [], []
 train_iou, val_iou   = [], []
 start = time.time()
-
-early_stopping = EarlyStopping(patience = 10, verbose = True)
+#early_stopping = EarlyStopping(patience = patience, verbose = True)
 for epoch in range(num_epochs):
     print(f'Epoch {epoch + 1}/{num_epochs}')
     start1 = time.time()
     train_epoch_loss, train_epoch_iou = train(model, train_dl)
     val_epoch_loss, val_epoch_iou     = validate(model, valid_dl, epoch)
-
-    scheduler.step(val_epoch_loss)
-    early_stopping(val_epoch_loss, model)   
 
     train_loss.append(train_epoch_loss)
     train_iou.append(train_epoch_iou)
@@ -129,9 +120,6 @@ for epoch in range(num_epochs):
     end = time.time()
     print(f'Train IoU: {train_epoch_iou:.4f}, Train Loss: {train_epoch_loss:.5f}, Val IoU: {val_epoch_iou:.4f}, Time: {end-start1:.2f} sec, Total Time: {end-start:.2f} sec')
 
-    if early_stopping.early_stop:
-        print("Early stopping")
-        break
 
 # Check if the directory does not exist
 if not os.path.exists(model_path):

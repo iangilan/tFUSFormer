@@ -1,9 +1,9 @@
 # Configuration settings
-num_epochs = 2
-batch_size = 4 # Batch size for DataLoader
+num_epochs = 100
+batch_size = 16 # Batch size for DataLoader
 
 # weights for the custom loss function
-alpha = 0.7
+alpha = 0.95
 
 # Upsample methods
 upsample_methods = {

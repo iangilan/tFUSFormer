@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import math
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 import os
 import time
@@ -33,6 +33,7 @@ class EarlyStopping:
 
         if self.best_score is None:
             self.best_score = score
+            self.val_loss_min = val_loss
             self.save_checkpoint(val_loss, model)
         elif score < self.best_score + self.delta:
             self.counter += 1

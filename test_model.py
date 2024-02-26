@@ -16,29 +16,41 @@ from torch import Tensor
 import torch.optim as optim
 import numpy as np
 import math
-from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm, trange
 import config
-from config import dir_path, model_path, upsampler
+from config import dir_path, model_path, upsampler, models_config, selected_model_key, test_data_mode
 from utils import iou
-from dataloader_tFUSFormer5ch import tFUSFormer5chDataset, DataLoader, train_ds, valid_ds, test_ds, train_dl, valid_dl, test_dl, unforeseen_test_ds, unforeseen_test_dl
-from dataloader_tFUSFormer5ch import scaler_Phigh, scaler_Plow, scaler_Slow, scaler_Vxlow, scaler_Vylow, scaler_Vzlow
+from tFUS_dataloader import Dataset, train_ds, valid_ds, test_ds, train_dl, valid_dl, test_dl, unforeseen_test_ds, unforeseen_test_dl
+from tFUS_dataloader import scaler_Phigh, scaler_Plow, scaler_Slow, scaler_Vxlow, scaler_Vylow, scaler_Vzlow
 from models import tFUSFormer_5ch
 from time import sleep
 
-upsampler = config.upsampler
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = tFUSFormer_5ch(upsampler=upsampler).to(device)
-model.load_state_dict(torch.load(f'{model_path}/tFUSFormer_5ch_model.pth'))
+model_class = models_config[selected_model_key]['class']
+
+model_params = models_config[selected_model_key]['params']
+model = model_class(**model_params).to(device)
+
+full_class_name = str(model.__class__)
+class_path = full_class_name.split("'")[1]  # Splits on ' and takes the second element which is the class path
+model_name = f"{class_path}".replace('s.', '_')
+print("Model name = ",model_name)
+print("Test dataset type = ", config.test_data_mode)
+
+model.load_state_dict(torch.load(f'{model_path}/{model_name}.pth'))
 model.eval()
 
 LR_list, HR_list, SR_list = [], [], []
 with torch.no_grad():
-    for lr, sk_lr, Vx_lr, Vy_lr, Vz_lr, hr in unforeseen_test_dl:
+    for lr, sk_lr, Vx_lr, Vy_lr, Vz_lr, hr in unforeseen_test_dl if test_data_mode == 'unseen' else test_dl:
         LR_list.append(lr.squeeze(1))
         HR_list.append(hr.squeeze(1))
-        SR_list.append(model(lr.to(device),sk_lr.to(device), Vx_lr.to(device), Vy_lr.to(device), Vz_lr.to(device)).squeeze(1))
+        if model.__class__.__name__ == 'tFUSFormer_5ch':
+            SR_list.append(model(lr.to(device),sk_lr.to(device), Vx_lr.to(device), Vy_lr.to(device), Vz_lr.to(device)).squeeze(1))
+        else:    
+            SR_list.append(model(lr.to(device)).squeeze(1))
 
 # Convert lists of tensors into single tensors
 LR = torch.cat(LR_list, dim=0)  # This will be of shape [18, 4, 25, 25, 25]
@@ -114,8 +126,7 @@ for sample in range(N_test):
 
     plt.figure(figsize=(22,22))
 
-    #folder_path = 'test_results/4x_5ch_foreseen/plot/'
-    folder_path = 'test_results/4x_5ch_unforeseen/plot/'
+    folder_path = f'test_results/{model_name}_{test_data_mode}/plot/'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
         
@@ -144,7 +155,7 @@ for sample in range(N_test):
     plt.subplots_adjust(wspace = 0, hspace = 0)
 
     # Set the file path with the folder path variable included
-    file_path2 = os.path.join(folder_path, '5ch_superformer_4x_sample%d.jpg' %sample)
+    file_path2 = os.path.join(folder_path, 'sample%d.jpg' %sample)
     # Save the figure with the specified file path
     plt.savefig(file_path2, dpi=600, bbox_inches='tight', pad_inches=0)
 iou_mean = np.mean(IoU_vec)
@@ -161,8 +172,7 @@ print('=================================================')
 
 #=========================================
 # Create the folder if it does not exist
-#folder_path1 = 'test_results/4x_5ch_foreseen/'
-folder_path1 = 'test_results/4x_5ch_unforeseen/'
+folder_path1 = f'test_results/{model_name}_{test_data_mode}/'
 if not os.path.exists(folder_path1):
     os.makedirs(folder_path1)
 
@@ -215,7 +225,10 @@ start_event.record()
 
 # Perform inference
 with torch.no_grad():
-    output = model(lr, sk_lr, Vx_lr, Vy_lr, Vz_lr).to(device)
+    if model.__class__.__name__ == 'tFUSFormer_5ch':
+        output = model(lr, sk_lr, Vx_lr, Vy_lr, Vz_lr).to(device)
+    else:
+        output = model(lr).to(device)
 
 # Record end event
 end_event.record()

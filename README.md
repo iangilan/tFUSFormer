@@ -1,13 +1,13 @@
 # tFUSFormer: Physics-guided super-resolution Transformer for simulation of transcranial focused ultrasound propagation in brain stimulation
 
 ## Overview
-This repository contains the implementation of a neural network designed to predict the simulation of transcranial focused ultrasound propagation in brain stimulation. tFUS brain stimulation is a non-invasive medical technique that uses focused sound waves to modulate neuronal activity in specific brain regions, offering potential therapeutic and research applications.
+This repository contains the implementation of neural networks designed to predict the simulation of transcranial focused ultrasound (tFUS) propagation in brain stimulation. tFUS brain stimulation is a non-invasive medical technique that uses focused sound waves to modulate neuronal activity in specific brain regions, offering potential therapeutic and research applications.
 
 ## Features
-- 3D Encoder-decoder-based convolutional neural network (EDCNN), U-Net, and Attention U-Net architecture for accurate prediction of ablated area and temperature distribution.
-- Custom loss functions that combine MSE, weighted MSE, and weighted Dice loss to enhance prediction accuracy.
-- Data pre-processing and loading modules for efficient handling of RFA simulation data.
-- Evaluation metrics to assess model performance, including MSE, RMSE, dice coefficient, and Jaccard index.
+- Fast super-resolution convolutional neural network (FSRCNN), squeeze-and-excitation super-resolution residual network (SE-SRResNet), super-resolution generative adversarial network (SRGAN), and tFUSFormer architecture for accurate prediction of focal region.
+- Custom loss functions that combine MSE, IoU loss, and distance function to enhance prediction accuracy.
+- Data pre-processing and loading modules for efficient handling of the tFUS simulation data.
+- Evaluation metrics to assess model performance, including IoU score and distance D between maximum pressure points.
 
 ## Requirements
 - python 3.9
@@ -20,23 +20,22 @@ To set up the project environment:
 
 ## Dataset
 The dataset used in this project consists of:
-- Temperature distribution data post-RFA treatment (https://drive.google.com/file/d/1F7OFzfXZdc6jGWc_qIpxW5WrgBBzYh_o/view?usp=sharing)
-- Ablated area data post-RFA treatment (https://drive.google.com/file/d/1CDLMCfDLaI5SfMdX6DV5EJflgjRwjj9D/view?usp=sharing)
-- Electrode location and geometry data during RFA treatment (https://drive.google.com/file/d/18rzSAqrPdOKl7YipzP73VnS7oK9d_-Ua/view?usp=sharing).
-- Segmented breast tumor data obtained from MR images (https://drive.google.com/file/d/1O85XRSbVJly1kMyxfzIvbwV-84xo0nxS/view?usp=sharing).
-> Note: MR images of breast cancer patients from a publicly available dataset ([Saha et al., 2018](https://www.nature.com/articles/s41416-018-0185-8)) were utilized to model tumor geometry.
+- Due to the size of the dataset, we only included the pre-trained model and test datasets.
+- Training dataset is not included.
 
 ## Usage
-1. Locate your RFA dataset in your local storage.
+1. Locate your test dataset in your local storage.
 2. Edit config.py according to the user's need.
-3. Edit the data loaders `data_loader_Temp.py` and `data_loader_Dmg.py` for temperature distribution and damaged area, respectively, to load and preprocess the data. 
-4. Train the model using `python train_Temp.py` or `python train_Dmg.py`.
-5. Evaluate the model's performance on test data using `python test_Temp.py` or `python test_Dmg.py`.
+3. Edit the data loaders `tFUS_dataloader.py` to load and preprocess the data. 
+4. Train the model using `python train_model.py`.
+5. Evaluate the model's performance on test data using `python test_model.py`.
 
 ## Model Architecture
-- The `RFACNN` model is a 3D EDCNN that consists of encoder and decoder blocks, designed for extracting features and predicting both temperature distribution and damaged (ablated) areas.
-- The `RFAUNet` model is a 3D U-Net, designed for extracting features and predicting both temperature distribution and damaged (ablated) areas.
-- The `RFAAttUNet` model is a 3D Attention U-Net, designed for extracting features and predicting both temperature distribution and damaged (ablated) areas.
+- The `FSRCNN_1ch` model is a 3D FSRCNN that consists of encoder and decoder blocks, designed for extracting features and predicting a focal region.
+- The `SESRResNet_1ch` model is a 3D SESRResNet, designed for extracting features and predicting a focal region.
+- The `SRGAN_1ch` model is a 3D SRGAN, designed for extracting features and predicting a focal region.
+- The `tFUSFormer_1ch` model is a 3D tFUSFormer, designed for extracting features and predicting a focal region.
+- The `tFUSFormer_1ch` model is a 3D tFUSFormer, designed for extracting features and predicting a focal region.
 - The architectures of all models are defined in `models.py`.
 
 ## Custom Loss Function

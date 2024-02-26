@@ -2,7 +2,7 @@ from models import FSRCNN_1ch, SESRResNet_1ch, SRGAN_1ch, tFUSFormer_1ch, tFUSFo
 
 # Configuration settings
 num_epochs = 100
-batch_size = 16 # Batch size for DataLoader
+batch_size = 4 # Batch size for DataLoader
 
 # weights for the custom loss function
 alpha = 0.95
@@ -19,7 +19,7 @@ upsample_methods = {
 }
 
 # Current model/upsample method
-selected_model_key = 'tFUSFormer_1ch'  # Choose a model
+selected_model_key = 'SESRResNet_1ch'  # Choose a model
 upsampler = upsample_methods["2"]
 
 # Configuration for available models

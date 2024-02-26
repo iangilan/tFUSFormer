@@ -152,8 +152,8 @@ def train(model, data_dl):
             outputs = model(P)  # SR
             
         loss = loss_func(outputs, label)
-        #loss2 = loss_func2(outputs, label)
-        #loss = config.alpha*loss1 + (1.0-config.alpha)*loss2
+        loss2 = loss_func2(outputs, label)
+        loss = config.alpha*loss + (1.0-config.alpha)*loss2
         loss.backward()
         optimizer.step()
 
@@ -187,8 +187,8 @@ def validate(model, data_dl, epoch):
                 outputs = model(P)  # SR
                         
             loss = loss_func(outputs, label)
-       	    #loss2 = loss_func2(outputs, label)
-            #loss = config.alpha*loss1 + (1.0-config.alpha)*loss2
+       	    loss2 = loss_func2(outputs, label)
+            loss = config.alpha*loss + (1.0-config.alpha)*loss2
 
             running_loss += loss.item()
             batch_iou = iou(label,outputs)
@@ -216,7 +216,7 @@ train_loss, val_loss = [], []
 train_iou, val_iou   = [], []
 start = time.time()
 
-early_stopping = EarlyStopping(patience = 10, verbose = True)
+early_stopping = EarlyStopping(patience = 40, verbose = True)
 for epoch in range(num_epochs):
     print(f'Epoch {epoch + 1}/{num_epochs}')
     start1 = time.time()

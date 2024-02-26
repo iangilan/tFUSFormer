@@ -20,7 +20,7 @@ def load_data_for_index(i):
 def load_unforeseen_data_for_index(i):
     """Load data for a specific index and all prefixes."""
     unforeseen_data_for_i = []
-    for prefix in ['13', '17']:#, '22']: Need to go back
+    for prefix in ['13', '17', '22']:
         unforeseen_data_for_i.append(load_unforeseen_data(prefix, i))
     return unforeseen_data_for_i
 
@@ -119,15 +119,15 @@ Vy_data = Vy_data.reshape(N, nxyz_low)
 Vz_data = Vz_data.reshape(N, nxyz_low)
 
 
-Plow_train, Plow_valid, Phigh_train, Phigh_valid = train_test_split(lr_data, hr_data, test_size = 0.2, random_state = 1)
+Plow_train, Plow_valid, Phigh_train, Phigh_valid = train_test_split(lr_data, hr_data, test_size = 1200, random_state = 1)
 del hr_data, lr_data
-skull_train, skull_valid = train_test_split(sk_data, test_size = 0.2, random_state = 1)
+skull_train, skull_valid = train_test_split(sk_data, test_size = 1200, random_state = 1)
 del sk_data
-Vx_train, Vx_valid = train_test_split(Vx_data, test_size = 0.2, random_state = 1)
+Vx_train, Vx_valid = train_test_split(Vx_data, test_size = 1200, random_state = 1)
 del Vx_data 
-Vy_train, Vy_valid = train_test_split(Vy_data, test_size = 0.2, random_state = 1)
+Vy_train, Vy_valid = train_test_split(Vy_data, test_size = 1200, random_state = 1)
 del Vy_data
-Vz_train, Vz_valid = train_test_split(Vz_data, test_size = 0.2, random_state = 1)
+Vz_train, Vz_valid = train_test_split(Vz_data, test_size = 1200, random_state = 1)
 del Vz_data
 
 Plow_valid, Plow_test, Phigh_valid, Phigh_test = train_test_split(Plow_valid, Phigh_valid, test_size = 0.5, random_state = 1)

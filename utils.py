@@ -17,7 +17,7 @@ from typing import Tuple
 # helper functions
 #####################################################################################
 class EarlyStopping:
-    def __init__(self, patience=10, verbose=False, delta=0, path='checkpoint.pt', trace_func=print):
+    def __init__(self, patience=40, verbose=False, delta=0, path='checkpoint.pt', trace_func=print):
         self.patience = patience
         self.verbose = verbose
         self.counter = 0

@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import math
-from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 import os
 import time
@@ -704,7 +703,7 @@ class FSRCNN_1ch(nn.Module):
         x = self.last_part(x)
 
         return x  
-        
+'''
 #========================================================================
 # SE-SRResNet_1ch
 #========================================================================
@@ -836,6 +835,136 @@ class SESRResNet_1ch(nn.Module):
             # IdentityBlock(16, 3),
             # IdentityBlock(16, 3),            
             # nn.Conv3d(16, 1, 3),
+            self.ReflectionPadding3D((1, 1, 1)),
+            nn.BatchNorm3d(1),
+            nn.ReLU()
+        )
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.squeeze_excite(x)
+        x = self.model(x)
+        return x
+'''
+#========================================================================
+# SE-SRResNet_1ch_reduced
+#========================================================================
+class SESRResNet_1ch(nn.Module):
+    class ReflectionPadding3D(nn.Module):
+        def __init__(self, padding):
+            super().__init__()
+            #super(ReflectionPadding3D, self).__init__()
+            # Assumption: padding = (d_pad, h_pad, w_pad)
+            self.d_pad, self.h_pad, self.w_pad = padding
+
+        def forward(self, x):
+            # Padding depth
+            x = F.pad(x, (0, 0, 0, 0, self.d_pad, self.d_pad), mode='reflect')
+            # Padding height
+            x = F.pad(x, (0, 0, self.h_pad, self.h_pad, 0, 0), mode='reflect')
+            # Padding width
+            x = F.pad(x, (self.w_pad, self.w_pad, 0, 0, 0, 0), mode='reflect')
+            return x
+            
+    class SqueezeExcitationLayer(nn.Module):
+        def __init__(self, channel, reduction_ratio):
+            super().__init__()
+            self.avg_pool = nn.AdaptiveAvgPool3d(1)
+            self.fc = nn.Sequential(
+                nn.Linear(channel, channel // reduction_ratio, bias=False),
+                nn.ReLU(inplace=True),
+                nn.Linear(channel // reduction_ratio, channel, bias=False),
+                nn.Sigmoid()
+            )
+
+        def forward(self, x):
+            b, c, _, _, _ = x.size()
+            y = self.avg_pool(x).view(b, c)
+            y = self.fc(y).view(b, c, 1, 1, 1)
+            return x * y.expand_as(x)
+
+    class ConvBlock(nn.Module):
+        def __init__(self, in_channels, out_channels, kernel_size):
+            super().__init__()
+            padding = kernel_size // 2  # Ensure same spatial dimensions
+            self.conv = nn.Sequential(
+                nn.Conv3d(in_channels, out_channels, kernel_size=(1, 1, 1), bias=False),
+                nn.BatchNorm3d(out_channels),
+                nn.ReLU(inplace=True),
+                nn.Conv3d(out_channels, out_channels, kernel_size=kernel_size, padding=padding, bias=False),
+                nn.BatchNorm3d(out_channels),
+                nn.ReLU(inplace=True),
+                nn.Conv3d(out_channels, out_channels, kernel_size=(1, 1, 1), bias=False),
+                nn.BatchNorm3d(out_channels),
+            )
+            self.shortcut = nn.Sequential(
+                nn.Conv3d(in_channels, out_channels, kernel_size=(1, 1, 1), bias=False),
+                nn.BatchNorm3d(out_channels)
+            )
+            self.relu = nn.ReLU(inplace=True)
+
+        def forward(self, x):
+            out = self.conv(x)
+            shortcut = self.shortcut(x)
+            return self.relu(out + shortcut)
+
+    class IdentityBlock(nn.Module):
+        def __init__(self, channels, kernel_size):
+            super().__init__()
+            padding = kernel_size // 2
+            self.conv = nn.Sequential(
+                nn.Conv3d(channels, channels, kernel_size=(1, 1, 1), bias=False),
+                nn.BatchNorm3d(channels),
+                nn.ReLU(inplace=True),
+                nn.Conv3d(channels, channels, kernel_size=kernel_size, padding=padding, bias=False),
+                nn.BatchNorm3d(channels),
+                nn.ReLU(inplace=True),
+                nn.Conv3d(channels, channels, kernel_size=(1, 1, 1), bias=False),
+                nn.BatchNorm3d(channels)
+            )
+            self.relu = nn.ReLU(inplace=True)
+
+        def forward(self, x):
+            out = self.conv(x)
+            return self.relu(out + x)
+
+    def __init__(self):
+        super(SESRResNet_1ch, self).__init__()
+        self.conv1 = nn.Sequential(
+            nn.Conv3d(1, 64, kernel_size=3, padding=1, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Conv3d(64, 32, kernel_size=3, padding=1, bias=False),
+            nn.ReLU(inplace=True),
+        )
+        self.squeeze_excite = self.SqueezeExcitationLayer(32, 4)
+        self.model = nn.Sequential(
+            nn.Conv3d(32, 32, 3),
+            self.ReflectionPadding3D((1, 1, 1)),
+            nn.BatchNorm3d(32),
+            nn.ReLU(),
+            self.ConvBlock(32, 32, 3),
+            self.IdentityBlock(32, 3),
+            self.IdentityBlock(32, 3),
+            self.IdentityBlock(32, 3),
+            nn.Upsample(scale_factor=2, mode='trilinear'),
+            nn.Conv3d(32, 16, 3),
+            self.ReflectionPadding3D((1, 1, 1)),
+            nn.BatchNorm3d(16),
+            nn.ReLU(),
+            self.ConvBlock(16, 16, 3),
+            self.IdentityBlock(16, 3),
+            self.IdentityBlock(16, 3),
+            self.IdentityBlock(16, 3),            
+            nn.Upsample(scale_factor=2, mode='trilinear'),
+            nn.Conv3d(16, 16, 3),
+            self.ReflectionPadding3D((1, 1, 1)),
+            nn.BatchNorm3d(16),
+            nn.ReLU(),
+            #self.ConvBlock(32, 32, 3),
+            #self.IdentityBlock(32, 3),
+            #self.IdentityBlock(32, 3),
+            #self.IdentityBlock(32, 3),   
+            nn.Conv3d(16, 1, 3),
             self.ReflectionPadding3D((1, 1, 1)),
             nn.BatchNorm3d(1),
             nn.ReLU()

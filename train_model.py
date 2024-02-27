@@ -21,7 +21,7 @@ from tqdm import tqdm, trange
 import config
 from config import dir_path, model_path, upsampler, models_config, selected_model_key
 from utils import iou, IoULoss
-from tFUS_dataloader import Dataset, train_ds, valid_ds, test_ds, train_dl, valid_dl, test_dl
+from tFUS_dataloader import train_dl, valid_dl
 from time import sleep
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from utils import EarlyStopping

@@ -20,7 +20,7 @@ from tqdm import tqdm, trange
 import config
 from config import dir_path, model_path, upsampler, models_config, selected_model_key, test_data_mode
 from utils import iou
-from tFUS_dataloader import Dataset, train_ds, valid_ds, test_ds, train_dl, valid_dl, test_dl, unforeseen_test_ds, unforeseen_test_dl
+from tFUS_dataloader import test_dl, unforeseen_test_dl
 from tFUS_dataloader import scaler_Phigh, scaler_Plow, scaler_Slow, scaler_Vxlow, scaler_Vylow, scaler_Vzlow
 from models import tFUSFormer_5ch
 from time import sleep

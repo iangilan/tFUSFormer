@@ -20,7 +20,7 @@ def load_data_for_index(i):
 def load_unforeseen_data_for_index(i):
     """Load data for a specific index and all prefixes."""
     unforeseen_data_for_i = []
-    for prefix in ['13', '17', '22']:
+    for prefix in ['13']:#, '17', '22']:
         unforeseen_data_for_i.append(load_unforeseen_data(prefix, i))
     return unforeseen_data_for_i
 
@@ -201,7 +201,7 @@ Vz_test     = Vz_test.reshape(N_test, 1, nx_low, ny_low, nz_low)
 
 
 #=========================================================================================================
-class Dataset(Dataset):
+class tFUS_Dataset(Dataset):
     def __init__(self, sim_data1, sim_data2, sim_data3, sim_data4, sim_data5, labels):
         self.sim_data1 = sim_data1
         self.sim_data2 = sim_data2
@@ -224,12 +224,12 @@ class Dataset(Dataset):
                 torch.tensor(sim3, dtype=torch.float32), torch.tensor(sim4,  dtype=torch.float32),
                 torch.tensor(sim5, dtype=torch.float32), torch.tensor(label, dtype=torch.float32))
 
-train_ds = Dataset(Plow_train, skull_train, Vx_train, Vy_train, Vz_train, Phigh_train)
-valid_ds = Dataset(Plow_valid, skull_valid, Vx_valid, Vy_valid, Vz_valid, Phigh_valid)
-test_ds  = Dataset(Plow_test, skull_test, Vx_test, Vy_test, Vz_test, Phigh_test)
+train_ds = tFUS_Dataset(Plow_train, skull_train, Vx_train, Vy_train, Vz_train, Phigh_train)
+valid_ds = tFUS_Dataset(Plow_valid, skull_valid, Vx_valid, Vy_valid, Vz_valid, Phigh_valid)
+test_ds  = tFUS_Dataset(Plow_test, skull_test, Vx_test, Vy_test, Vz_test, Phigh_test)
 
-train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
-valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=True)
+train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=False)
+valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=False)
 test_dl  = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
 
 
@@ -317,10 +317,38 @@ for i in range(unforeseen_N_test):
     unforeseen_Vy_test[i, 0, :, :, :]    = np.reshape(unforeseen_Vy_test[i, :],     (nx_low,  ny_low,  nz_low))
     unforeseen_Vz_test[i, 0, :, :, :]    = np.reshape(unforeseen_Vz_test[i, :],     (nx_low,  ny_low,  nz_low))
 
-unforeseen_test_ds = Dataset(unforeseen_Plow_test, unforeseen_skull_test, unforeseen_Vx_test, unforeseen_Vy_test, unforeseen_Vz_test, unforeseen_Phigh_test)
+unforeseen_test_ds = tFUS_Dataset(unforeseen_Plow_test, unforeseen_skull_test, unforeseen_Vx_test, unforeseen_Vy_test, unforeseen_Vz_test, unforeseen_Phigh_test)
 unforeseen_test_dl = DataLoader(unforeseen_test_ds, batch_size=batch_size)
 
 print('N_train = ', N_train)
 print('N_valid = ', N_valid)
-print('N_test (foreseen) = ', N_test)
+print('N_test (foreseen)   = ', N_test)
 print('N_test (unforeseen) = ', unforeseen_N_test)
+'''
+def save_dataloader_to_hdf5(dataloader, hdf5_filename):
+    # Initialize lists to store data and labels
+    all_data = []
+    all_labels = []
+
+    # Iterate through the DataLoader
+    for data, labels in dataloader:
+        # Assuming data and labels are numpy arrays or can be converted to numpy arrays
+        all_data.append(data.numpy())
+        all_labels.append(labels.numpy())
+
+    # Concatenate all data and labels
+    all_data = np.concatenate(all_data, axis=0)
+    all_labels = np.concatenate(all_labels, axis=0)
+
+    # Save to HDF5
+    with h5py.File(hdf5_filename, 'w') as hf:
+        hf.create_dataset('data', data=all_data)
+        hf.create_dataset('labels', data=all_labels)
+
+# Example usage
+# Replace 'train_dl', 'valid_dl', 'test_dl', 'unforeseen_test_dl' with your DataLoader variables
+save_dataloader_to_hdf5(train_dl, 'train_data.hdf5')
+save_dataloader_to_hdf5(valid_dl, 'valid_data.hdf5')
+save_dataloader_to_hdf5(test_dl, 'foreseen_test_data.hdf5')
+save_dataloader_to_hdf5(unforeseen_test_dl, 'unforeseen_test_data_sk13.hdf5')
+'''

@@ -20,7 +20,7 @@ def load_data_for_index(i):
 def load_unforeseen_data_for_index(i):
     """Load data for a specific index and all prefixes."""
     unforeseen_data_for_i = []
-    for prefix in ['13']:#, '17', '22']:
+    for prefix in ['13', '17', '22']:
         unforeseen_data_for_i.append(load_unforeseen_data(prefix, i))
     return unforeseen_data_for_i
 

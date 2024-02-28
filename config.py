@@ -19,7 +19,7 @@ upsample_methods = {
 }
 
 # Current model/upsample method
-selected_model_key = 'tFUSFormer_1ch'  # Choose a model
+selected_model_key = 'tFUSFormer_5ch'  # Choose a model
 upsampler = upsample_methods["2"]
 
 # Configuration for available models

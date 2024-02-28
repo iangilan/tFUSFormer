@@ -73,6 +73,28 @@ end_index = 600
 
 # Initialize lists to store the matrices
 lr_data, hr_data, Vx_data, Vy_data, Vz_data, sk_data = [], [], [], [], [], []
+print("0")
+
+
+'''
+# Function to process each item's data
+def process_data_for_i(data_for_i):
+    lr_data.extend([item[0] for item in data_for_i])
+    hr_data.extend([item[1] for item in data_for_i])
+    Vx_data.extend([item[2] for item in data_for_i])
+    Vy_data.extend([item[3] for item in data_for_i])
+    Vz_data.extend([item[4] for item in data_for_i])
+    sk_data.extend([item[5] for item in data_for_i])
+
+# Adjust the number of workers based on your specific task's characteristics
+num_workers = 4  # Example: Adjust based on your system's I/O capabilities and the nature of your task
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
+    data_for_all_indices = list(executor.map(load_data_for_index, range(start_index, end_index + 1)))
+    for data_for_i in data_for_all_indices:
+        process_data_for_i(data_for_i)
+print("1")
+'''
 
 with concurrent.futures.ThreadPoolExecutor() as executor:
     data_for_all_indices = executor.map(load_data_for_index, range(start_index, end_index + 1))
@@ -129,7 +151,7 @@ Vy_train, Vy_valid = train_test_split(Vy_data, test_size = 1200, random_state = 
 del Vy_data
 Vz_train, Vz_valid = train_test_split(Vz_data, test_size = 1200, random_state = 1)
 del Vz_data
-
+print("2")
 Plow_valid, Plow_test, Phigh_valid, Phigh_test = train_test_split(Plow_valid, Phigh_valid, test_size = 0.5, random_state = 1)
 skull_valid, skull_test = train_test_split(skull_valid, test_size = 0.5, random_state = 1)
 Vx_valid, Vx_test = train_test_split(Vx_valid, test_size = 0.5, random_state = 1)
@@ -174,7 +196,7 @@ Vy_test  = scaler_Vylow.transform(Vy_test)
 Vz_train = scaler_Vzlow.fit_transform(Vz_train)
 Vz_valid = scaler_Vzlow.transform(Vz_valid)
 Vz_test  = scaler_Vzlow.transform(Vz_test)
-
+print("3")
 # Reshape the training data
 Phigh_train  = Phigh_train.reshape(N_train, 1, nx_high, ny_high, nz_high)
 Plow_train   = Plow_train.reshape(N_train, 1, nx_low, ny_low, nz_low)
@@ -199,7 +221,7 @@ Vx_test     = Vx_test.reshape(N_test, 1, nx_low, ny_low, nz_low)
 Vy_test     = Vy_test.reshape(N_test, 1, nx_low, ny_low, nz_low)
 Vz_test     = Vz_test.reshape(N_test, 1, nx_low, ny_low, nz_low)
 
-
+print("4")
 #=========================================================================================================
 class tFUS_Dataset(Dataset):
     def __init__(self, sim_data1, sim_data2, sim_data3, sim_data4, sim_data5, labels):
@@ -231,7 +253,7 @@ test_ds  = tFUS_Dataset(Plow_test, skull_test, Vx_test, Vy_test, Vz_test, Phigh_
 train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=False)
 valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=False)
 test_dl  = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
-
+print("5")
 
 ########################
 # Unforeseen test data #
@@ -243,7 +265,13 @@ end_index = 200
 
 # Initialize lists to store the matrices
 unforeseen_lr_data, unforeseen_hr_data, unforeseen_Vx_data, unforeseen_Vy_data, unforeseen_Vz_data, unforeseen_sk_data = [], [], [], [], [], []
-
+'''
+with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
+    data_for_all_indices = list(executor.map(load_unforeseen_data_for_index, range(start_index, end_index + 1)))
+    for data_for_i in data_for_all_indices:
+        process_data_for_i(data_for_i)
+print("6")
+'''
 with concurrent.futures.ThreadPoolExecutor() as executor:
     unforeseen_data_for_all_indices = executor.map(load_unforeseen_data_for_index, range(start_index, end_index + 1))
     for unforeseen_data_for_i in unforeseen_data_for_all_indices:
@@ -270,7 +298,7 @@ unforeseen_Vy_data = unforeseen_Vy_data[:, start_index1:end_index1, start_index1
 unforeseen_Vz_data = unforeseen_Vz_data[:, start_index1:end_index1, start_index1:end_index1, start_index1:end_index1]
 unforeseen_sk_data = unforeseen_sk_data[:, :25, :25, :25]  # Assuming the shape is already 25x25x25
 unforeseen_hr_data = unforeseen_hr_data[:, start_index2:end_index2, start_index2:end_index2, start_index2:end_index2]
-
+print("7")
 
 N_samples_hr, nx_high, ny_high, nz_high = unforeseen_hr_data.shape
 N_samples_lr, nx_low, ny_low, nz_low    = unforeseen_lr_data.shape
@@ -301,6 +329,8 @@ del unforeseen_Vy_data
 unforeseen_Vz_test    = scaler_Vzlow.transform(unforeseen_Vz_data)
 del unforeseen_Vz_data
 
+print("8")
+
 # Reshape the test data
 unforeseen_Phigh_test = unforeseen_Phigh_test.reshape(unforeseen_N_test, 1, nx_high, ny_high, nz_high)
 unforeseen_Plow_test  = unforeseen_Plow_test.reshape(unforeseen_N_test, 1, nx_low, ny_low, nz_low)
@@ -319,7 +349,7 @@ for i in range(unforeseen_N_test):
 
 unforeseen_test_ds = tFUS_Dataset(unforeseen_Plow_test, unforeseen_skull_test, unforeseen_Vx_test, unforeseen_Vy_test, unforeseen_Vz_test, unforeseen_Phigh_test)
 unforeseen_test_dl = DataLoader(unforeseen_test_ds, batch_size=batch_size)
-
+print("9")
 print('N_train = ', N_train)
 print('N_valid = ', N_valid)
 print('N_test (foreseen)   = ', N_test)

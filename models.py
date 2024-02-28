@@ -979,6 +979,7 @@ class SESRResNet_1ch(nn.Module):
 #========================================================================
 # SRGAN_1ch
 #========================================================================
+'''
 class SRGAN_1ch(nn.Module):
     class ResidualBlock(nn.Module):
         def __init__(self, in_channels):
@@ -997,7 +998,6 @@ class SRGAN_1ch(nn.Module):
             residual = self.bn2(residual)
             return x + residual
 
-    '''
     class Generator(nn.Module):
         def __init__(self, num_residual_blocks=16):
             super(SRGAN_1ch.Generator, self).__init__()
@@ -1043,30 +1043,44 @@ class SRGAN_1ch(nn.Module):
 
             self.fc1 = nn.Linear(562432, 1024)  # This size needs to be adjusted based on the input dimensions
             self.fc2 = nn.Linear(1024, 1)            
-    '''
+'''
+class SRGAN_1ch(nn.Module):
+    class ResidualBlock(nn.Module):
+        def __init__(self, in_channels):
+            super(SRGAN_1ch.ResidualBlock, self).__init__()
+            self.conv1 = nn.Conv3d(in_channels, in_channels, kernel_size=3, stride=1, padding=1)
+            self.bn1 = nn.BatchNorm3d(in_channels)
+            self.lrelu = nn.LeakyReLU(0.2)  # LeakyReLU
+            self.conv2 = nn.Conv3d(in_channels, in_channels, kernel_size=3, stride=1, padding=1)
+            self.bn2 = nn.BatchNorm3d(in_channels)
+
+        def forward(self, x):
+            residual = self.lrelu(self.bn1(self.conv1(x)))  # Pre-activation
+            residual = self.lrelu(self.bn2(self.conv2(residual)))
+            return x + residual
+
     class Generator(nn.Module):
         def __init__(self, num_residual_blocks=16):
             super(SRGAN_1ch.Generator, self).__init__()
             self.conv1 = nn.Conv3d(1, 16, kernel_size=9, stride=1, padding=4)
-            self.prelu = nn.LeakyReLU(0.2)  # Changed to LeakyReLU
+            self.lrelu = nn.LeakyReLU(0.2)  # LeakyReLU
 
-            # Simplified residual blocks example
             res_blocks = [SRGAN_1ch.ResidualBlock(16) for _ in range(num_residual_blocks)]
             self.res_blocks = nn.Sequential(*res_blocks)
 
             self.conv2 = nn.Conv3d(16, 16, kernel_size=3, stride=1, padding=1)
             self.bn2 = nn.BatchNorm3d(16)
 
-            # Efficient upsample
-            self.up = nn.ConvTranspose3d(16, 128, kernel_size=3, stride=2, padding=1, output_padding=1)  # Example
+            # Consider more efficient upsampling methods
+            self.up = nn.ConvTranspose3d(16, 128, kernel_size=3, stride=2, padding=1, output_padding=1)
             self.conv4 = nn.Conv3d(128, 1, kernel_size=9, stride=1, padding=4)
 
         def forward(self, x):
-            x1 = self.prelu(self.conv1(x))
+            x1 = self.lrelu(self.conv1(x))
             x2 = self.res_blocks(x1)
             x3 = self.bn2(self.conv2(x2))
-            x3 = self.prelu(x3 + x1)  # Pre-activation
-            x4 = self.up(x3)  # Upsample efficiently
+            x3 = self.lrelu(x3 + x1)  # Pre-activation
+            x4 = self.up(x3) 
             return self.conv4(x4)
 
     class Discriminator(nn.Module):
@@ -1090,7 +1104,7 @@ class SRGAN_1ch(nn.Module):
 
             self.layers = nn.Sequential(*layers)
 
-            self.fc1 = nn.Linear(562432, 1024)  # This size needs to be adjusted based on the input dimensions
+            self.fc1 = nn.Linear(562432, 1024)  # Adjust size based on input!
             self.fc2 = nn.Linear(1024, 1)
 
         def forward(self, x):

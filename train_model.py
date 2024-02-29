@@ -19,7 +19,7 @@ import math
 from torch.utils.data import DataLoader
 from tqdm import tqdm, trange
 import config
-from config import dir_path, model_path, upsampler, models_config, selected_model_key
+from config import model_path, upsampler, models_config, selected_model_key
 from utils import iou, IoULoss
 from tFUS_dataloader import train_dl, valid_dl
 from time import sleep

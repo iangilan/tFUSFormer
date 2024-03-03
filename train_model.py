@@ -18,6 +18,7 @@ import numpy as np
 import math
 from torch.utils.data import DataLoader
 from tqdm import tqdm, trange
+import utils
 import config
 from config import model_path, upsampler, models_config, selected_model_key
 from utils import iou, IoULoss
@@ -75,7 +76,8 @@ def train_GAN(model, data_dl):
         g_loss = loss_func(fake_outputs, label)  # Content loss (e.g., MSE)
         fake_pred = model.discriminate(fake_outputs).squeeze()
         adversarial_g_loss = adversarial_loss(fake_pred, torch.ones_like(fake_pred))  # Adversarial loss
-        total_g_loss = config.alpha * g_loss + (1 - config.alpha) * adversarial_g_loss
+        #total_g_loss = config.alpha * g_loss + (1 - config.alpha) * adversarial_g_loss
+        total_g_loss = g_loss + 0.001*adversarial_g_loss
         total_g_loss.backward()
         optimizer_G.step()
 

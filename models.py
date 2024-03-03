@@ -75,7 +75,7 @@ class tFUSFormer_5ch(nn.Module):
     """
 
     def __init__(self, img_size=25, patch_size=1, in_chans=1,
-                 embed_dim=96, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #(96),84,72,60,36
+                 embed_dim=120, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #108,(96),84,72,60,36
                  window_size=5, mlp_ratio=4., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, rpb=True ,patch_norm=True,
@@ -979,7 +979,7 @@ class SESRResNet_1ch(nn.Module):
 #========================================================================
 # SRGAN_1ch
 #========================================================================
-'''
+
 class SRGAN_1ch(nn.Module):
     class ResidualBlock(nn.Module):
         def __init__(self, in_channels):
@@ -999,7 +999,7 @@ class SRGAN_1ch(nn.Module):
             return x + residual
 
     class Generator(nn.Module):
-        def __init__(self, num_residual_blocks=16):
+        def __init__(self, num_residual_blocks=5):
             super(SRGAN_1ch.Generator, self).__init__()
             self.conv1 = nn.Conv3d(1, 32, kernel_size=9, stride=1, padding=4)
             self.prelu = nn.PReLU()
@@ -1030,7 +1030,7 @@ class SRGAN_1ch(nn.Module):
             in_channels = 32
             out_channels = 64
 
-            for _ in range(3):
+            for _ in range(4):
                 layers.extend([
                     nn.Conv3d(in_channels, out_channels, kernel_size=3, stride=2, padding=1),
                     nn.BatchNorm3d(out_channels),
@@ -1041,71 +1041,8 @@ class SRGAN_1ch(nn.Module):
 
             self.layers = nn.Sequential(*layers)
 
-            self.fc1 = nn.Linear(562432, 1024)  # This size needs to be adjusted based on the input dimensions
+            self.fc1 = nn.Linear(175616, 1024) #(562432, 1024)  # This size needs to be adjusted based on the input dimensions
             self.fc2 = nn.Linear(1024, 1)            
-'''
-class SRGAN_1ch(nn.Module):
-    class ResidualBlock(nn.Module):
-        def __init__(self, in_channels):
-            super(SRGAN_1ch.ResidualBlock, self).__init__()
-            self.conv1 = nn.Conv3d(in_channels, in_channels, kernel_size=3, stride=1, padding=1)
-            self.bn1 = nn.BatchNorm3d(in_channels)
-            self.lrelu = nn.LeakyReLU(0.2)  # LeakyReLU
-            self.conv2 = nn.Conv3d(in_channels, in_channels, kernel_size=3, stride=1, padding=1)
-            self.bn2 = nn.BatchNorm3d(in_channels)
-
-        def forward(self, x):
-            residual = self.lrelu(self.bn1(self.conv1(x)))  # Pre-activation
-            residual = self.lrelu(self.bn2(self.conv2(residual)))
-            return x + residual
-
-    class Generator(nn.Module):
-        def __init__(self, num_residual_blocks=16):
-            super(SRGAN_1ch.Generator, self).__init__()
-            self.conv1 = nn.Conv3d(1, 16, kernel_size=9, stride=1, padding=4)
-            self.lrelu = nn.LeakyReLU(0.2)  # LeakyReLU
-
-            res_blocks = [SRGAN_1ch.ResidualBlock(16) for _ in range(num_residual_blocks)]
-            self.res_blocks = nn.Sequential(*res_blocks)
-
-            self.conv2 = nn.Conv3d(16, 16, kernel_size=3, stride=1, padding=1)
-            self.bn2 = nn.BatchNorm3d(16)
-
-            # Consider more efficient upsampling methods
-            self.up = nn.ConvTranspose3d(16, 128, kernel_size=3, stride=2, padding=1, output_padding=1)
-            self.conv4 = nn.Conv3d(128, 1, kernel_size=9, stride=1, padding=4)
-
-        def forward(self, x):
-            x1 = self.lrelu(self.conv1(x))
-            x2 = self.res_blocks(x1)
-            x3 = self.bn2(self.conv2(x2))
-            x3 = self.lrelu(x3 + x1)  # Pre-activation
-            x4 = self.up(x3) 
-            return self.conv4(x4)
-
-    class Discriminator(nn.Module):
-        def __init__(self):
-            super(SRGAN_1ch.Discriminator, self).__init__()
-            self.conv1 = nn.Conv3d(1, 16, kernel_size=3, stride=1, padding=1)
-            self.lrelu = nn.LeakyReLU(0.2)
-
-            layers = []
-            in_channels = 16
-            out_channels = 64
-
-            for _ in range(3):
-                layers.extend([
-                    nn.Conv3d(in_channels, out_channels, kernel_size=3, stride=2, padding=1),
-                    nn.BatchNorm3d(out_channels),
-                    nn.LeakyReLU(0.2)
-                ])
-                in_channels = out_channels
-                out_channels *= 2
-
-            self.layers = nn.Sequential(*layers)
-
-            self.fc1 = nn.Linear(562432, 1024)  # Adjust size based on input!
-            self.fc2 = nn.Linear(1024, 1)
 
         def forward(self, x):
             x = self.lrelu(self.conv1(x))
@@ -1114,7 +1051,7 @@ class SRGAN_1ch(nn.Module):
             x = self.lrelu(self.fc1(x))
             return torch.sigmoid(self.fc2(x))
 
-    def __init__(self, num_residual_blocks=16):
+    def __init__(self, num_residual_blocks=5):
         super(SRGAN_1ch, self).__init__()
         self.generator = self.Generator(num_residual_blocks)
         self.discriminator = self.Discriminator()
@@ -1132,4 +1069,94 @@ class SRGAN_1ch(nn.Module):
 
     def discriminate(self, x):
         return self.discriminator(x)
-         
+
+'''
+class SRGAN_1ch(nn.Module):
+    class ResidualBlock(nn.Module):
+        def __init__(self, in_channels):
+            super(SRGAN_1ch.ResidualBlock, self).__init__()
+            self.conv1 = nn.Conv3d(in_channels, in_channels, kernel_size=3, stride=1, padding=1)
+            self.bn1 = nn.BatchNorm3d(in_channels)
+            self.lrelu = nn.LeakyReLU(0.2)  # LeakyReLU
+            self.conv2 = nn.Conv3d(in_channels, in_channels, kernel_size=3, stride=1, padding=1)
+            self.bn2 = nn.BatchNorm3d(in_channels)
+
+        def forward(self, x):
+            residual = self.lrelu(self.bn1(self.conv1(x)))  # Pre-activation
+            residual = self.lrelu(self.bn2(self.conv2(residual)))
+            return x + residual
+
+    class Generator(nn.Module):
+        def __init__(self, num_residual_blocks=3):
+            super(SRGAN_1ch.Generator, self).__init__()
+            self.conv1 = nn.Conv3d(1, 16, kernel_size=9, stride=1, padding=4)
+            self.lrelu = nn.LeakyReLU(0.2)  # LeakyReLU
+
+            res_blocks = [SRGAN_1ch.ResidualBlock(16) for _ in range(num_residual_blocks)]
+            self.res_blocks = nn.Sequential(*res_blocks)
+
+            self.conv2 = nn.Conv3d(16, 16, kernel_size=3, stride=1, padding=1)
+            self.bn2 = nn.BatchNorm3d(16)
+
+            # Consider more efficient upsampling methods
+            self.up = nn.ConvTranspose3d(16, 32, kernel_size=3, stride=2, padding=1, output_padding=1)
+            self.conv4 = nn.Conv3d(32, 1, kernel_size=9, stride=1, padding=4)
+
+        def forward(self, x):
+            x1 = self.lrelu(self.conv1(x))
+            x2 = self.res_blocks(x1)
+            x3 = self.bn2(self.conv2(x2))
+            x3 = self.lrelu(x3 + x1)  # Pre-activation
+            x4 = self.up(x3) 
+            return self.conv4(x4)
+
+    class Discriminator(nn.Module):
+        def __init__(self):
+            super(SRGAN_1ch.Discriminator, self).__init__()
+            self.conv1 = nn.Conv3d(1, 16, kernel_size=3, stride=1, padding=1)
+            self.lrelu = nn.LeakyReLU(0.2)
+
+            layers = []
+            in_channels = 16
+            out_channels = 32
+
+            for _ in range(3):
+                layers.extend([
+                    nn.Conv3d(in_channels, out_channels, kernel_size=3, stride=2, padding=1),
+                    nn.BatchNorm3d(out_channels),
+                    nn.LeakyReLU(0.2)
+                ])
+                in_channels = out_channels
+                out_channels *= 2
+
+            self.layers = nn.Sequential(*layers)
+
+            self.fc1 = nn.Linear(13*13*13*4394, 1024)#(562432, 1024)  # Adjust size based on input!
+            self.fc2 = nn.Linear(1024, 1)
+
+        def forward(self, x):
+            x = self.lrelu(self.conv1(x))
+            x = self.layers(x)
+            x = x.view(x.size(0), -1)
+            x = self.lrelu(self.fc1(x))
+            return torch.sigmoid(self.fc2(x))
+
+    def __init__(self, num_residual_blocks=3):
+        super(SRGAN_1ch, self).__init__()
+        self.generator = self.Generator(num_residual_blocks)
+        self.discriminator = self.Discriminator()
+
+    def forward(self, x, mode='generator'):
+        if mode == 'generator':
+            return self.generator(x)
+        elif mode == 'discriminator':
+            return self.discriminator(x)
+        else:
+            raise ValueError("Mode can be either 'generator' or 'discriminator'")
+
+    def generate(self, x):
+        return self.generator(x)
+
+    def discriminate(self, x):
+        return self.discriminator(x)
+'''     

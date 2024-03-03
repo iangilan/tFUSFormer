@@ -4,7 +4,7 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 import config
 import concurrent.futures
-import scipy 
+import scipy.io 
 from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
 from config import dir_data
 import h5py
@@ -22,7 +22,7 @@ def load_data_for_index(i):
 def load_unforeseen_data_for_index(i):
     """Load data for a specific index and all prefixes."""
     unforeseen_data_for_i = []
-    for prefix in ['13', '17', '22']:
+    for prefix in ['22']:#, '17', '22']:
         unforeseen_data_for_i.append(load_unforeseen_data(prefix, i))
     return unforeseen_data_for_i
 
@@ -67,6 +67,17 @@ def load_unforeseen_data(prefix, i):
 
     return p_LR, p_HR, ux_LR, uy_LR, uz_LR, sk_LR
 
+def save_scaler_to_hdf5(scaler, filepath, scaler_name):
+    """Save a scaler to an HDF5 file."""
+    with h5py.File(filepath, 'a') as f:  # 'a' mode to append or create new
+        if scaler_name in f:
+            del f[scaler_name]  # Delete existing group if present
+        group = f.create_group(scaler_name)
+        for attribute in ['scale_', 'min_', 'data_min_', 'data_max_', 'data_range_']:
+            if hasattr(scaler, attribute):  # Check if the attribute exists
+                group.create_dataset(attribute, data=getattr(scaler, attribute))
+        # Save feature_range as it is always available (it's a constructor parameter)
+        group.create_dataset('feature_range', data=scaler.feature_range)
 
 # Define the range of file numbers to load
 start_index = 1
@@ -119,7 +130,6 @@ Vx_data = Vx_data.reshape(N, nxyz_low)
 Vy_data = Vy_data.reshape(N, nxyz_low)
 Vz_data = Vz_data.reshape(N, nxyz_low)
 
-
 Plow_train, Plow_valid, Phigh_train, Phigh_valid = train_test_split(lr_data, hr_data, test_size = 0.16666, random_state = 1)
 del hr_data, lr_data
 skull_train, skull_valid = train_test_split(sk_data, test_size = 0.16666, random_state = 1)
@@ -159,6 +169,12 @@ Phigh_test  = scaler_Phigh.transform(Phigh_test)
 Plow_train  = scaler_Plow.fit_transform(Plow_train)
 Plow_valid  = scaler_Plow.transform(Plow_valid)
 Plow_test   = scaler_Plow.transform(Plow_test)
+
+  
+# Save scalers for HR and LR pressure data to the HDF5 files
+save_scaler_to_hdf5(scaler_Phigh, f'{dir_data}/scaler_P_HR.hdf5', 'scaler_Phigh')
+save_scaler_to_hdf5(scaler_Plow, f'{dir_data}/scaler_P_LR.hdf5', 'scaler_Plow')
+print('scaler saved')
 
 skull_train = scaler_Slow.fit_transform(skull_train)
 skull_valid = scaler_Slow.transform(skull_valid)
@@ -332,7 +348,8 @@ def save_dataset_hdf5(ds, filename):
                 group.create_dataset(f'sim_data{j+1}', data=tensor.numpy())
             group.create_dataset('label', data=np.array(item[-1]))
 
-save_dataset_hdf5(train_ds, f'{dir_data}/train_ds.hdf5')
-save_dataset_hdf5(valid_ds, f'{dir_data}/valid_ds.hdf5')
-save_dataset_hdf5(test_ds, f'{dir_data}/foreseen_test_ds.hdf5')
+#save_dataset_hdf5(train_ds, f'{dir_data}/train_ds.hdf5')
+#save_dataset_hdf5(valid_ds, f'{dir_data}/valid_ds.hdf5')
+#save_dataset_hdf5(test_ds, f'{dir_data}/foreseen_test_ds.hdf5')
 #save_dataset_hdf5(unforeseen_test_ds, f'{dir_data}/unforeseen_test_all3_ds.hdf5')
+#save_dataset_hdf5(unforeseen_test_ds, f'{dir_data}/unforeseen_test_sk22_ds.hdf5')

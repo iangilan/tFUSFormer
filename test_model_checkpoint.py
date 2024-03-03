@@ -35,7 +35,7 @@ model_name = f"{class_path}".replace('s.', '_')
 print("Model name = ",model_name)
 print("Test dataset type = ", config.test_data_mode)
 
-model.load_state_dict(torch.load(f'{model_path}/{model_name}.pth'))
+model.load_state_dict(torch.load('checkpoint.pt'))
 model.eval()
 
 def load_scaler_from_hdf5(filepath, scaler_name):

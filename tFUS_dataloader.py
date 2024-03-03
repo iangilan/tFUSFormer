@@ -13,7 +13,6 @@ from config import dir_data
 # Use the configurations
 batch_size = config.batch_size
 
-
 class tFUSDataset(torch.utils.data.Dataset):
     def __init__(self, file_path):
         self.file_path = file_path

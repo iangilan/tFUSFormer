@@ -48,7 +48,6 @@ models_config = {
 
 # Define the directory path
 #dir_data = "/path/to/your/data_directory"
-#dir_data   = "/home/mws/BrainUltrasoundSimulation"
-#dir_data   = "/media/mws/Data/tFUSFormer_data"
-dir_data   = "/home/mws/tFUSFormer_data"
+dir_data   = "/media/mws/Data/tFUSFormer_data"
+#dir_data   = "/home/mws/tFUSFormer_data"
 model_path = f"model"

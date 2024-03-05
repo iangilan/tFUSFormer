@@ -75,7 +75,7 @@ class tFUSFormer_5ch(nn.Module):
     """
 
     def __init__(self, img_size=25, patch_size=1, in_chans=1,
-                 embed_dim=60, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #108,(96),84,72,60,36
+                 embed_dim=36, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #108,(96),84,72,60,36
                  window_size=5, mlp_ratio=4., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, rpb=True ,patch_norm=True,
@@ -185,7 +185,7 @@ class tFUSFormer_5ch(nn.Module):
             self.conv_last = nn.Conv3d(num_feat, num_out_ch, 3, 1, 1)
         elif self.upsampler == 'pixelshuffledirect':
             self.upsample = UpsampleOneStep(upscale, embed_dim, num_out_ch,
-                                            (patches_resolution[0], patches_resolution[1]))
+                                            (patches_resolution[0], patches_resolution[1]))                             
         elif self.upsampler == 'nearest+conv':
             assert self.upscale == 4, 'only support x4 now.'
             self.conv_before_upsample = nn.Sequential(nn.Conv3d(embed_dim, num_feat, 3, 1, 1),
@@ -308,8 +308,14 @@ class tFUSFormer_5ch(nn.Module):
             #x4 = self.conv_after_body(self.forward_features(x4))
             #x5 = self.conv_after_body(self.forward_features(x5))
             
-            x = (1.0/6.0)*(x+self.conv_after_body(self.forward_features(self.conv_first(x))) + self.conv_after_body(self.forward_features(self.conv_first(x2))) + self.conv_after_body(self.forward_features(self.conv_first(x3))) + self.conv_after_body(self.forward_features(self.conv_first(x4))) + self.conv_after_body(self.forward_features(self.conv_first(x5))))
-            print(x.size())
+            weighted_sum = (self.channel_weights[1] * self.conv_after_body(self.forward_features(self.conv_first(x)))  + 
+                            self.channel_weights[2] * self.conv_after_body(self.forward_features(self.conv_first(x2))) + 
+                            self.channel_weights[3] * self.conv_after_body(self.forward_features(self.conv_first(x3))) + 
+                            self.channel_weights[4] * self.conv_after_body(self.forward_features(self.conv_first(x4))) + 
+                            self.channel_weights[5] * self.conv_after_body(self.forward_features(self.conv_first(x5))))
+            weighted_sum = weighted_sum / self.channel_weights.sum()                
+            #print(x.size())
+            x = x + weighted_sum
             x = self.conv_before_upsample(x)
             x = self.upsample(x)
             x = self.conv_last(x)
@@ -318,7 +324,7 @@ class tFUSFormer_5ch(nn.Module):
         elif self.upsampler == 'pixelshuffledirect': #2  
             #x_vol = self.forward_volume(x)     
             # Apply learned weights
-            weighted_sum = (self.channel_weights[0] * x + 
+            weighted_sum = (#self.channel_weights[0] * x + 
                             self.channel_weights[1] * self.conv_after_body(self.forward_features(self.conv_first(x)))  + 
                             self.channel_weights[2] * self.conv_after_body(self.forward_features(self.conv_first(x2))) + 
                             self.channel_weights[3] * self.conv_after_body(self.forward_features(self.conv_first(x3))) + 
@@ -326,8 +332,10 @@ class tFUSFormer_5ch(nn.Module):
                             self.channel_weights[5] * self.conv_after_body(self.forward_features(self.conv_first(x5))))                       
             #print((self.forward_volume(x)).size())
             weighted_sum = weighted_sum / self.channel_weights.sum()
-            x = x + weighted_sum
-            x = self.upsample(x)
+            #x = x + weighted_sum
+            #x = self.upsample(x)
+            x = self.upsample(weighted_sum)
+
         elif self.upsampler == 'nearest+conv':
             x = self.conv_first(x)
             x = self.conv_after_body(self.forward_features(x)) + x

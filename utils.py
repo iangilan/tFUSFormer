@@ -69,7 +69,7 @@ class IoULoss(torch.nn.Module):
     def init(self):
         super(IoULoss, self).init()
         
-    def forward(self, input, target, alpha=1/np.sqrt(30000), smooth=1.0e-6):
+    def forward(self, input, target, c=1/np.sqrt(30000), smooth=1.0e-6):
         # maximum pressure value
         max_input  = torch.max(input)
         max_target = torch.max(target)
@@ -77,7 +77,8 @@ class IoULoss(torch.nn.Module):
         # calculating distance between max points
         idx_input = unravel_indices(torch.argmax(input), input.shape) # index for maximum of input
         idx_target = unravel_indices(torch.argmax(target), target.shape) # index for maximum of target
-        dist = ((idx_input[2:]-idx_target[2:])**2).sum(axis=0)
+        #dist = ((idx_input[2:]-idx_target[2:])**2).sum(axis=0)
+        dist = torch.sqrt(((idx_input[2:]-idx_target[2:])**2).sum(axis=0))
         
         #flatten label and prediction tensors
         input = input.view(-1)
@@ -93,7 +94,8 @@ class IoULoss(torch.nn.Module):
 
         iou = (count+smooth) / (count_p+count_t-count+smooth)
 
-        return -torch.log(iou) + alpha*dist
+        #return -torch.log(iou) + alpha*dist
+        return (1-iou) + c*dist
 
 def _ntuple(n):
 

@@ -2,7 +2,7 @@ from models import FSRCNN_1ch, SESRResNet_1ch, SRGAN_1ch, tFUSFormer_1ch, tFUSFo
 
 # Configuration settings
 num_epochs = 100
-batch_size = 22 # Batch size for DataLoader
+batch_size = 32 # Batch size for DataLoader
 
 # weights for the custom loss function
 alpha = 0.95
@@ -48,6 +48,6 @@ models_config = {
 
 # Define the directory path
 #dir_data = "/path/to/your/data_directory"
-#dir_data   = "/media/mws/Data/tFUSFormer_data"
-dir_data   = "/home/mws/tFUSFormer_data"
+dir_data   = "/media/mws/Data/tFUSFormer_data"
+#dir_data   = "/home/mws/tFUSFormer_data"
 model_path = f"model"

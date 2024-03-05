@@ -75,11 +75,11 @@ class tFUSFormer_5ch(nn.Module):
     """
 
     def __init__(self, img_size=25, patch_size=1, in_chans=1,
-                 embed_dim=36, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #108,(96),84,72,60,36
+                 embed_dim=96, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #108,(96),84,72,60,36
                  window_size=5, mlp_ratio=4., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, rpb=True ,patch_norm=True,
-                 use_checkpoint=True, upscale=4, img_range=1., upsampler='', resi_connection='1conv',
+                 use_checkpoint=True, upscale=4, img_range=1., upsampler='', resi_connection='3conv',
                  output_type = "residual",num_feat=64,**kwargs):
         super(tFUSFormer_5ch, self).__init__()
         # Initialize learnable weights for 5 channels, initialized to 1/5 to mimic averaging initially
@@ -332,9 +332,9 @@ class tFUSFormer_5ch(nn.Module):
                             self.channel_weights[5] * self.conv_after_body(self.forward_features(self.conv_first(x5))))                       
             #print((self.forward_volume(x)).size())
             weighted_sum = weighted_sum / self.channel_weights.sum()
-            #x = x + weighted_sum
-            #x = self.upsample(x)
-            x = self.upsample(weighted_sum)
+            x = x + weighted_sum
+            x = self.upsample(x)
+            #x = self.upsample(weighted_sum)
 
         elif self.upsampler == 'nearest+conv':
             x = self.conv_first(x)

@@ -172,9 +172,9 @@ Plow_test   = scaler_Plow.transform(Plow_test)
 
   
 # Save scalers for HR and LR pressure data to the HDF5 files
-save_scaler_to_hdf5(scaler_Phigh, f'{dir_data}/scaler_P_HR.hdf5', 'scaler_Phigh')
-save_scaler_to_hdf5(scaler_Plow, f'{dir_data}/scaler_P_LR.hdf5', 'scaler_Plow')
-print('scaler saved')
+#save_scaler_to_hdf5(scaler_Phigh, f'{dir_data}/scaler_P_HR.hdf5', 'scaler_Phigh')
+#save_scaler_to_hdf5(scaler_Plow, f'{dir_data}/scaler_P_LR.hdf5', 'scaler_Plow')
+#print('scaler saved')
 
 skull_train = scaler_Slow.fit_transform(skull_train)
 skull_valid = scaler_Slow.transform(skull_valid)
@@ -353,3 +353,4 @@ def save_dataset_hdf5(ds, filename):
 #save_dataset_hdf5(test_ds, f'{dir_data}/foreseen_test_ds.hdf5')
 #save_dataset_hdf5(unforeseen_test_ds, f'{dir_data}/unforeseen_test_all3_ds.hdf5')
 #save_dataset_hdf5(unforeseen_test_ds, f'{dir_data}/unforeseen_test_sk22_ds.hdf5')
+#print('dataset saved')

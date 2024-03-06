@@ -59,7 +59,7 @@ If you use this tool in your research, please cite the following paper:
 }
 
 For the manifold discovery and analysis (MDA) analysis, please cite the following paper:
-- [Md Tauhidul Islam, Zixia Zhou, Hongyi Ren, Masoud Badiei Khuzani, Daniel Kapp, James Zou, Lu Tian, Joseph C. Liao and Lei Xing. 2023, "Revealing Hidden Patterns in Deep Neural Network Feature Space Continuum via Manifold Learning", Nature Communications, 14(1), p.8506.]([https://www.nature.com/articles/s41416-018-0185-8](https://www.nature.com/articles/s41467-023-43958-w#citeas)
+- [Md Tauhidul Islam, Zixia Zhou, Hongyi Ren, Masoud Badiei Khuzani, Daniel Kapp, James Zou, Lu Tian, Joseph C. Liao and Lei Xing. 2023, "Revealing Hidden Patterns in Deep Neural Network Feature Space Continuum via Manifold Learning", Nature Communications, 14(1), p.8506.](https://www.nature.com/articles/s41467-023-43958-w)
 - BibTeX formatted citation\
 @Article{Islam2023,\
 author={Islam, Md Tauhidul and Zhou, Zixia and Ren, Hongyi and Khuzani, Masoud Badiei and Kapp, Daniel and Zou, James and Tian, Lu and Liao, Joseph C. and Xing, Lei},\

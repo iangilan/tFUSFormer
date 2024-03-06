@@ -20,8 +20,7 @@ To set up the project environment:
 
 ## Dataset
 The dataset used in this project consists of:
-- Due to the huge size of the dataset, we only included the pre-trained models and test datasets.
-- Training dataset is not included.
+- Due to the huge size of the training dataset, we only included the pre-trained models and test datasets.
 
 ## Usage
 1. Locate your test dataset in your local storage.

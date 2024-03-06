@@ -4,7 +4,7 @@
 This repository contains the implementation of neural networks designed to predict the simulation of transcranial focused ultrasound (tFUS) propagation in brain stimulation. tFUS brain stimulation is a non-invasive medical technique that uses focused sound waves to modulate neuronal activity in specific brain regions, offering potential therapeutic and research applications.
 
 ## Features
-- Fast super-resolution convolutional neural network (FSRCNN), squeeze-and-excitation super-resolution residual network (SE-SRResNet), super-resolution generative adversarial network (SRGAN), and tFUSFormer architecture for accurate prediction of focal region.
+- Fast super-resolution convolutional neural network (FSRCNN), squeeze-and-excitation super-resolution residual network (SE-SRResNet), super-resolution generative adversarial network (SRGAN), and tFUSFormer architecture for accurate prediction of tFUS focal region.
 - Custom loss functions that combine MSE, IoU loss, and distance function to enhance prediction accuracy.
 - Data pre-processing and loading modules for efficient handling of the tFUS simulation data.
 - Evaluation metrics to assess model performance, including IoU score and distance D between maximum pressure points.

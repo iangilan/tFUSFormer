@@ -57,19 +57,20 @@ If you use this tool in your research, please cite the following paper:
       primaryClass={eess.IV},\
       doi={10.48550/arXiv.2312.13947}
 }
-- [A. Saha, M. R. Harowicz, L. J. Grimm, C. E. Kim, S. V. Ghate, R. Walsh, M. A. Mazurowski, A machine learning approach to radiogenomics of breast cancer: a study of 922 subjects and 529 DCE-MRI features, Br. J. Cancer. 119 (2018) 508–516.](https://www.nature.com/articles/s41416-018-0185-8)
+- For the manifold discovery and analysis (MDA) analysis, please cite the following paper:
+- [Md Tauhidul Islam, Zixia Zhou, Hongyi Ren, Masoud Badiei Khuzani, Daniel Kapp, James Zou, Lu Tian, Joseph C. Liao and Lei Xing. 2023, "Revealing Hidden Patterns in Deep Neural Network Feature Space Continuum via Manifold Learning", Nature Communications, 14(1), p.8506.]([https://www.nature.com/articles/s41416-018-0185-8](https://www.nature.com/articles/s41467-023-43958-w#citeas))
 - BibTeX formatted citation\
-﻿@Article{Saha2018,\
-author={Saha, Ashirbani and Harowicz, Michael R. and Grimm, Lars J. and Kim, Connie E. and Ghate, Sujata V. and Walsh, Ruth and Mazurowski, Maciej A.},\
-title={A machine learning approach to radiogenomics of breast cancer: a study of 922 subjects and 529 {DCE-MRI} features},\
-journal={British Journal of Cancer},
-year={2018},\
-month={Aug},\
-day={01},\
-volume={119},\
-number={4},\
-pages={508-516},\
-doi={10.1038/s41416-018-0185-8}
+@Article{Islam2023,
+author={Islam, Md Tauhidul and Zhou, Zixia and Ren, Hongyi and Khuzani, Masoud Badiei and Kapp, Daniel and Zou, James and Tian, Lu and Liao, Joseph C. and Xing, Lei},
+title={Revealing hidden patterns in deep neural network feature space continuum via manifold learning},
+journal={Nature Communications},
+year={2023},
+month={Dec},
+day={21},
+volume={14},
+number={1},
+pages={8506},
+doi={10.1038/s41467-023-43958-w}
 }
 
 ## Contact

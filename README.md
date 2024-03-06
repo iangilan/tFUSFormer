@@ -46,16 +46,16 @@ The model is evaluated based on Mean Squared Error (MSE), Root Mean Squared Erro
 
 ## Citation
 If you use this tool in your research, please cite the following paper:
-- [M. Shin, M. Seo, S. Cho, J. Park, J. Kwon, D. Lee, K. Yoon. "PhysRFANet: Physics-Guided Neural Network for Real-Time Prediction of Thermal Effect During Radiofrequency Ablation Treatment." *Arxiv*](https://arxiv.org/abs/2312.13947)
+- [M. Shin, M. Seo, S.-S. Yoo, K. Yoon. "tFUSFormer: Physics-guided super-resolution Transformer for simulation of transcranial focused ultrasound propagation in brain stimulation." *Arxiv*](https://arxiv.org/abs/2312.13947)
 - BibTeX formatted citation\
 @misc{shin2023physrfanet,\
-      title={{PhysRFANet}: {P}hysics-Guided Neural Network for Real-Time Prediction of Thermal Effect During Radiofrequency Ablation Treatment},\
-      author={Minwoo Shin and Minjee Seo and Seonaeng Cho and Juil Park and Joon Ho Kwon and Deukhee Lee and Kyungho Yoon},\
-      year={2023},\
-      eprint={2312.13947},\
+      title={{tFUSFormer}: {P}hysics-guided super-resolution {T}ransformer for simulation of transcranial focused ultrasound propagation in brain stimulation},\
+      author={Minwoo Shin and Minjee Seo and Seung-Schik Yoo and and Kyungho Yoon},\
+      year={2024},\
+      eprint={},\
       archivePrefix={arXiv},\
-      primaryClass={eess.IV},\
-      doi={10.48550/arXiv.2312.13947}
+      primaryClass={},\
+      doi={}
 }
 
 For the manifold discovery and analysis (MDA) analysis, please cite the following paper:

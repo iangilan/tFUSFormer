@@ -57,7 +57,8 @@ If you use this tool in your research, please cite the following paper:
       primaryClass={eess.IV},\
       doi={10.48550/arXiv.2312.13947}
 }
-- For the manifold discovery and analysis (MDA) analysis, please cite the following paper:
+
+For the manifold discovery and analysis (MDA) analysis, please cite the following paper:
 - [Md Tauhidul Islam, Zixia Zhou, Hongyi Ren, Masoud Badiei Khuzani, Daniel Kapp, James Zou, Lu Tian, Joseph C. Liao and Lei Xing. 2023, "Revealing Hidden Patterns in Deep Neural Network Feature Space Continuum via Manifold Learning", Nature Communications, 14(1), p.8506.]([https://www.nature.com/articles/s41416-018-0185-8](https://www.nature.com/articles/s41467-023-43958-w#citeas))
 - BibTeX formatted citation\
 @Article{Islam2023,\

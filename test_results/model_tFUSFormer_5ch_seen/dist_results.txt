@@ -1,4 +1,4 @@
 =================================================
-dist_mean for N_test cases   =  2.504895881332431
-dist_median for N_test cases =  2.0
+dist_mean for N_test cases   =  2.502405563949473
+dist_median for N_test cases =  2.0615528128088303
 =================================================

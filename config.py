@@ -2,7 +2,7 @@ from models import FSRCNN_1ch, SESRResNet_1ch, SRGAN_1ch, tFUSFormer_1ch, tFUSFo
 
 # Configuration settings
 num_epochs = 100
-batch_size = 12 # Batch size for DataLoader
+batch_size = 16 # Batch size for DataLoader
 
 # weights for the custom loss function
 alpha = 0.999

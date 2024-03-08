@@ -75,7 +75,7 @@ class tFUSFormer_5ch(nn.Module):
     """
 
     def __init__(self, img_size=25, patch_size=1, in_chans=1,
-                 embed_dim=132, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #108,(96),84,72,60,36
+                 embed_dim=96, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6], #108,(96),84,72,60,36
                  window_size=5, mlp_ratio=4., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, rpb=True ,patch_norm=True,

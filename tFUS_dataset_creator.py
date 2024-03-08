@@ -171,11 +171,6 @@ Plow_valid  = scaler_Plow.transform(Plow_valid)
 Plow_test   = scaler_Plow.transform(Plow_test)
 
   
-# Save scalers for HR and LR pressure data to the HDF5 files
-#save_scaler_to_hdf5(scaler_Phigh, f'{dir_data}/scaler_P_HR.hdf5', 'scaler_Phigh')
-#save_scaler_to_hdf5(scaler_Plow, f'{dir_data}/scaler_P_LR.hdf5', 'scaler_Plow')
-#print('scaler saved')
-
 skull_train = scaler_Slow.fit_transform(skull_train)
 skull_valid = scaler_Slow.transform(skull_valid)
 skull_test  = scaler_Slow.transform(skull_test)
@@ -191,6 +186,16 @@ Vy_test  = scaler_Vylow.transform(Vy_test)
 Vz_train = scaler_Vzlow.fit_transform(Vz_train)
 Vz_valid = scaler_Vzlow.transform(Vz_valid)
 Vz_test  = scaler_Vzlow.transform(Vz_test)
+
+# Save scalers for HR and LR pressure data to the HDF5 files
+save_scaler_to_hdf5(scaler_Phigh, f'{dir_data}/scaler_P_HR.hdf5', 'scaler_Phigh')
+save_scaler_to_hdf5(scaler_Plow,  f'{dir_data}/scaler_P_LR.hdf5', 'scaler_Plow')
+
+save_scaler_to_hdf5(scaler_Slow,  f'{dir_data}/scaler_S_LR.hdf5',  'scaler_Slow')
+save_scaler_to_hdf5(scaler_Vxlow, f'{dir_data}/scaler_Vx_LR.hdf5', 'scaler_Vxlow')
+save_scaler_to_hdf5(scaler_Vylow, f'{dir_data}/scaler_Vy_LR.hdf5', 'scaler_Vylow')
+save_scaler_to_hdf5(scaler_Vzlow, f'{dir_data}/scaler_Vz_LR.hdf5', 'scaler_Vzlow')
+print('scaler saved')
 
 # Reshape the training data
 Phigh_train  = Phigh_train.reshape(N_train, 1, nx_high, ny_high, nz_high)

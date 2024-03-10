@@ -13,7 +13,7 @@ alpha = 0.999
 # unseen1: unseen test dataset 1
 # unseen2: unseen test dataset 2
 # unseen3: unseen test dataset 3
-test_data_mode = 'unseen1'  # 'seen', 'unseen', 'unseen1', 'unseen2', or 'unseen3' for the test dataset
+test_data_mode = 'unseen'  # 'seen', 'unseen', 'unseen1', 'unseen2', or 'unseen3' for the test dataset
 
 # Upsample methods
 upsample_methods = {

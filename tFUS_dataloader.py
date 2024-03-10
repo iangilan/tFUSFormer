@@ -6,9 +6,8 @@ import config
 import concurrent.futures
 import scipy 
 from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
-from config import dir_data
+from config import dir_data, test_data_mode
 import h5py
-from config import dir_data
 
 # Use the configurations
 batch_size = config.batch_size
@@ -37,10 +36,19 @@ class tFUSDataset(torch.utils.data.Dataset):
 train_ds = tFUSDataset(f'{dir_data}/train_ds.hdf5')
 valid_ds = tFUSDataset(f'{dir_data}/valid_ds.hdf5')
 test_ds  = tFUSDataset(f'{dir_data}/foreseen_test_ds.hdf5')
-unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk13_ds.hdf5')
-#unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk17_ds.hdf5')
-#unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk22_ds.hdf5')
-#unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_all3_ds.hdf5')
+unforeseen_test_ds = []
+if test_data_mode == 'seen':
+    print("test_data_mode = seen")
+elif test_data_mode == 'unseen1':
+    unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk13_ds.hdf5')
+elif test_data_mode == 'unseen2':
+    unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk17_ds.hdf5')
+elif test_data_mode == 'unseen3':
+    unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk22_ds.hdf5')
+elif test_data_mode == 'unseen':
+    unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_all3_ds.hdf5')
+else:
+    print("Invalid test_data_mode value or dataset not found.")
 
 train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=False)
 valid_dl = DataLoader(valid_ds, batch_size=batch_size, shuffle=False)

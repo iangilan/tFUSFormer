@@ -613,14 +613,15 @@ class tFUSFormer_1ch(nn.Module):
             x = self.conv_last(x)
             x = self.conv_last(self.upsample(x))
 
-        elif self.upsampler == 'pixelshuffledirect': #2  
-            #x_vol = self.forward_volume(x)     
+        elif self.upsampler == 'pixelshuffledirect': #2     
             # Apply learned weights
-            weighted_sum = (self.channel_weights[0] * x + 
-                            self.channel_weights[1] * self.conv_after_body(self.forward_features(self.conv_first(x))))                       
-            #print((self.forward_volume(x)).size())
-            weighted_sum = weighted_sum / self.channel_weights.sum()
-            x = x + weighted_sum
+            #weighted_sum = (self.channel_weights[0] * x + 
+            #                self.channel_weights[1] * self.conv_after_body(self.forward_features(self.conv_first(x))))                       
+            #weighted_sum = weighted_sum / self.channel_weights.sum()
+            #x = x + weighted_sum
+            #x = self.upsample(x)
+            
+            x = self.conv_after_body(self.forward_features(self.conv_first(x)))
             x = self.upsample(x)
         elif self.upsampler == 'nearest+conv':
             x = self.conv_first(x)

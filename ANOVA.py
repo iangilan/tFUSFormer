@@ -91,7 +91,7 @@ model_order = ["Interp", "FSRCNN", "SRGAN", "SESRResNet", "tFUSFormer_1ch", "tFU
 
 plt.figure(figsize=(8, 12))
 sns.boxplot(x='Model', y='IoU', data=df, palette="Set3", width=1, order=model_order)
-plt.ylim(30, 111)
+plt.ylim(30, 113)
 plt.yticks(range(30, 101, 10))
 # Now directly specify 'tFUSFormer_5ch' position based on the updated 'model_order'
 tFUSFormer_5ch_pos = model_order.index('tFUSFormer_5ch')
@@ -132,7 +132,7 @@ for index, row in significant_pairs_sorted.iterrows():
         
         # Draw the annotation line
         plt.plot([group1_pos, group1_pos, group2_pos, group2_pos], [y_pos_annotation, y_pos_annotation + 1, y_pos_annotation + 1, y_pos_annotation], lw=1.5, c='black')
-        plt.text((group1_pos + group2_pos) * .5, y_pos_annotation + 0.5, "*", ha='center', va='bottom', color='black', fontsize=20)
+        plt.text((group1_pos + group2_pos) * .5, y_pos_annotation - 0.1, "*", ha='center', va='bottom', color='black', fontsize=20)
         
         # Decrement y_pos_annotation for the next pair to place it lower
         y_pos_annotation += 3  # Adjust spacing as needed

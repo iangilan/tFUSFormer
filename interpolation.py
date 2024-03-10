@@ -52,7 +52,12 @@ scaler_Plow = load_scaler_from_hdf5(f'{dir_data}/scaler_P_LR.hdf5', 'scaler_Plow
 
 LR_list, HR_list, SR_list = [], [], []
 with torch.no_grad():
-    for lr, sk_lr, Vx_lr, Vy_lr, Vz_lr, hr in unforeseen_test_dl if test_data_mode == 'unseen' else test_dl:
+    # Determine the correct dataset based on test_data_mode
+    test_dataset = test_dl  # Default to test_dl
+    if test_data_mode in ['unseen', 'unseen1', 'unseen2', 'unseen3']:
+        test_dataset = unforeseen_test_dl
+
+    for lr, sk_lr, Vx_lr, Vy_lr, Vz_lr, hr in test_dataset:
         LR_list.append(lr.squeeze(1))
         HR_list.append(hr.squeeze(1))
 

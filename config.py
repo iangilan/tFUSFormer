@@ -8,7 +8,12 @@ batch_size = 16 # Batch size for DataLoader
 alpha = 0.999
 
 # Configuration variable for the test dataset mode
-test_data_mode = 'seen'  # 'unseen' or 'seen' for the test dataset
+# seen:    foreseen test dataset
+# unseen:  unseen test dataset 1, 2, and 3
+# unseen1: unseen test dataset 1
+# unseen2: unseen test dataset 2
+# unseen3: unseen test dataset 3
+test_data_mode = 'unseen1'  # 'seen', 'unseen', 'unseen1', 'unseen2', or 'unseen3' for the test dataset
 
 # Upsample methods
 upsample_methods = {
@@ -48,6 +53,6 @@ models_config = {
 
 # Define the directory path
 #dir_data = "/path/to/your/data_directory"
-dir_data   = "/media/mws/Data/tFUSFormer_data"
-#dir_data   = "/home/mws/tFUSFormer_data"
+#dir_data   = "/media/mws/Data/tFUSFormer_data"
+dir_data   = "/home/mws/tFUSFormer_data"
 model_path = f"model"

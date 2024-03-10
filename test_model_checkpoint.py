@@ -61,10 +61,10 @@ def load_scaler_from_hdf5(filepath, scaler_name):
 
 scaler_Phigh = load_scaler_from_hdf5(f'{dir_data}/scaler_P_HR.hdf5',  'scaler_Phigh')
 scaler_Plow  = load_scaler_from_hdf5(f'{dir_data}/scaler_P_LR.hdf5',  'scaler_Plow')
-scaler_Slow  = load_scaler_from_hdf5(f'{dir_data}/scaler_S_LR.hdf5',  'scaler_Slow')
-scaler_Vxlow = load_scaler_from_hdf5(f'{dir_data}/scaler_Vx_LR.hdf5', 'scaler_Vxlow')
-scaler_Vylow = load_scaler_from_hdf5(f'{dir_data}/scaler_Vy_LR.hdf5', 'scaler_Vylow')
-scaler_Vzlow = load_scaler_from_hdf5(f'{dir_data}/scaler_Vz_LR.hdf5', 'scaler_Vzlow')
+#scaler_Slow  = load_scaler_from_hdf5(f'{dir_data}/scaler_S_LR.hdf5',  'scaler_Slow')
+#scaler_Vxlow = load_scaler_from_hdf5(f'{dir_data}/scaler_Vx_LR.hdf5', 'scaler_Vxlow')
+#scaler_Vylow = load_scaler_from_hdf5(f'{dir_data}/scaler_Vy_LR.hdf5', 'scaler_Vylow')
+#scaler_Vzlow = load_scaler_from_hdf5(f'{dir_data}/scaler_Vz_LR.hdf5', 'scaler_Vzlow')
 
 
 LR_list, HR_list, SR_list = [], [], []

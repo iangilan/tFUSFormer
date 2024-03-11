@@ -18,12 +18,12 @@ def load_iou_scores(file_path):
 
 # Paths to the IoU score files
 file_paths = {
-    "Interp": "/home/mws/tFUSFormer/test_results/interpolation_seen/IoU_vec.txt",
-    "FSRCNN": "/home/mws/tFUSFormer/test_results/model_FSRCNN_1ch_seen/IoU_vec.txt",
-    "SRGAN": "/home/mws/tFUSFormer/test_results/model_SRGAN_1ch_seen/IoU_vec.txt",    
-    "SESRResNet": "/home/mws/tFUSFormer/test_results/model_SESRResNet_1ch_seen/IoU_vec.txt",
-    "tFUSFormer_1ch": "/home/mws/tFUSFormer/test_results/model_tFUSFormer_1ch_seen/IoU_vec.txt",
-    "tFUSFormer_5ch": "/home/mws/tFUSFormer/test_results/model_tFUSFormer_5ch_seen/IoU_vec.txt"
+    "Interp": "/home/mws/tFUSFormer/test_results/interpolation_unseen3/IoU_vec.txt",
+    "FSRCNN": "/home/mws/tFUSFormer/test_results/model_FSRCNN_1ch_unseen3/IoU_vec.txt",
+    "SRGAN": "/home/mws/tFUSFormer/test_results/model_SRGAN_1ch_unseen3/IoU_vec.txt",    
+    "SESRResNet": "/home/mws/tFUSFormer/test_results/model_SESRResNet_1ch_unseen3/IoU_vec.txt",
+    "tFUSFormer_1ch": "/home/mws/tFUSFormer/test_results/model_tFUSFormer_1ch_unseen3/IoU_vec.txt",
+    "tFUSFormer_5ch": "/home/mws/tFUSFormer/test_results/model_tFUSFormer_5ch_unseen3/IoU_vec.txt"
 }
 
 # Load IoU scores for each model
@@ -59,8 +59,9 @@ for model, scores in iou_scores.items():
     mean_iou = np.mean(scores)
     std_dev_iou = np.std(scores)
     print(f"{model}: Mean IoU = {mean_iou:.4f}, Std. Dev. = {std_dev_iou:.4f}")
+
 #============================================================================================
-# Boxplot
+# Boxplot with ANOVA
 #============================================================================================ 
 plt.rcParams['axes.titlesize'] = 20  # Title font size
 plt.rcParams['axes.labelsize'] = 18  # Axis label font size
@@ -73,22 +74,7 @@ df['Model'] = pd.Categorical(df['Model'], categories=iou_scores.keys(), ordered=
 
 # Convert IoU scores to percentages by multiplying by 100
 df['IoU'] = df['IoU'] * 100
-    
-# Create a boxplot
-plt.figure(figsize=(8, 12))
-sns.boxplot(x='Model', y='IoU', data=df, palette="Set3", width=1)  # Increase width to reduce gaps
-plt.title('Comparison of IoU Scores Across Models')
-plt.ylabel('IoU Score (%)')
-plt.xlabel('Model')
-plt.xticks(rotation=45)
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
-plt.tight_layout()
-plt.savefig('iou_scores_comparison.png', dpi=600)
-plt.show()
 
-#============================================================================================
-# Boxplot with ANOVA
-#============================================================================================
 model_order = ["Interp", "FSRCNN", "SRGAN", "SESRResNet", "tFUSFormer_1ch", "tFUSFormer_5ch"]
 
 plt.figure(figsize=(8, 12))
@@ -178,6 +164,6 @@ for y in np.arange(30, 101, 10):
 
 plt.tight_layout()
 
-plt.savefig('iou_scores_comparison_ANOVA.png', dpi=600)
+plt.savefig('iou_scores_comparison_ANOVA_unseen3.png', dpi=600)
 plt.show()
 

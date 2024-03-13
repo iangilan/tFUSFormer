@@ -45,10 +45,10 @@ The model is evaluated based on the intersection over union (IoU) score and the 
 
 ## Citation
 If you use this tool in your research, please cite the following paper:
-- [M. Shin, M. Seo, S.-S. Yoo, K. Yoon. "tFUSFormer: Physics-guided super-resolution Transformer for simulation of transcranial focused ultrasound propagation in brain stimulation."](TBD)
+- [M. Shin, M. Seo, S.-S. Yoo, K. Yoon. "tFUSFormer: Physics-guided super-resolution Transformer for simulation of transcranial focused ultrasound propagation in brain stimulation.", TBD](TBD)
 - BibTeX formatted citation\
 @misc{shin2024tfusformer,\
-      title={{tFUSFormer}: t{FUSF}ormer: {P}hysics-guided super-resolution {T}ransformer for simulation of transcranial focused ultrasound propagation in brain stimulation},\
+      title={{tFUSFormer}: {P}hysics-guided super-resolution {T}ransformer for simulation of transcranial focused ultrasound propagation in brain stimulation},\
       author={Minwoo Shin and Minjee Seo and Seung-Schik Yoo and and Kyungho Yoon},\
       year={2024},\
       eprint={},\

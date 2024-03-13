@@ -55,7 +55,7 @@ If you use this tool in your research, please cite the following paper:
       archivePrefix={},\
       primaryClass={},\
       doi={}
-}
+}\
 For the SE-SRResNet, please cite the following paper:
 - [M. Shin, Z. Peng, H.-J. Kim, S.-S. Yoo, K. Yoon. "Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation", Computer Methods and Programs in Biomedicine, 237, 2023, 107591](https://www.sciencedirect.com/science/article/pii/S0169260723002560)
 - BibTeX formatted citation\
@@ -67,7 +67,7 @@ volume = {237},\
 pages = {107591},\
 journal = {Comput. Meth. Programs Biomed.},\
 doi = {10.1016/j.cmpb.2023.107591}
-}
+}\
 For the manifold discovery and analysis (MDA) analysis, please cite the following paper:
 - [Md Tauhidul Islam, Zixia Zhou, Hongyi Ren, Masoud Badiei Khuzani, Daniel Kapp, James Zou, Lu Tian, Joseph C. Liao and Lei Xing. 2023, "Revealing Hidden Patterns in Deep Neural Network Feature Space Continuum via Manifold Learning", Nature Communications, 14(1), p.8506.](https://www.nature.com/articles/s41467-023-43958-w)
 - BibTeX formatted citation\

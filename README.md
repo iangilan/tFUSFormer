@@ -57,7 +57,7 @@ If you use this tool in your research, please cite the following paper:
       doi={}
 }
 For the SE-SRResNet, please cite the following paper:
-- [M. Shin and Z. Peng and H.-J. Kim and S.-S. Yoo and K. Yoon. "Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation", Computer Methods and Programs in Biomedicine, 237, 2023, 107591](https://www.sciencedirect.com/science/article/pii/S0169260723002560)
+- [M. Shin, Z. Peng, H.-J. Kim, S.-S. Yoo, K. Yoon. "Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation", Computer Methods and Programs in Biomedicine, 237, 2023, 107591](https://www.sciencedirect.com/science/article/pii/S0169260723002560)
 - BibTeX formatted citation\
 @article{shin2023,\
 author = "Minwoo Shin and Zhuogang Peng and Hyo-Jin Kim and Seung-Schik Yoo and Kyungho Yoon",\

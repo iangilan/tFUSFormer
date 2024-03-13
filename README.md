@@ -57,15 +57,15 @@ If you use this tool in your research, please cite the following paper:
       doi={}
 }
 For the SE-SRResNet, please cite the following paper:
-- [M. Shin and Z. Peng and H.-J. Kim and S.-S. Yoo and K. Yoon. "Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation."](10.1016/j.cmpb.2023.107591)
+- [M. Shin and Z. Peng and H.-J. Kim and S.-S. Yoo and K. Yoon. "Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation", Computer Methods and Programs in Biomedicine, 237, 2023, 107591](https://www.sciencedirect.com/science/article/pii/S0169260723002560)
 - BibTeX formatted citation\
-@article{shin2023,
-author = "Minwoo Shin and Zhuogang Peng and Hyo-Jin Kim and Seung-Schik Yoo and Kyungho Yoon",
-title = "{Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation}",
-year = {2023},
-volume = {237},
-pages = {107591},
-journal = {Comput. Meth. Programs Biomed.},
+@article{shin2023,\
+author = "Minwoo Shin and Zhuogang Peng and Hyo-Jin Kim and Seung-Schik Yoo and Kyungho Yoon",\
+title = "{Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation}",\
+year = {2023},\
+volume = {237},\
+pages = {107591},\
+journal = {Comput. Meth. Programs Biomed.},\
 doi = {10.1016/j.cmpb.2023.107591}
 }
 For the manifold discovery and analysis (MDA) analysis, please cite the following paper:

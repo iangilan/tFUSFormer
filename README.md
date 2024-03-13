@@ -34,29 +34,40 @@ The dataset used in this project consists of:
 - The `SESRResNet_1ch` model is a 3D SESRResNet, designed for extracting features and predicting a focal region.
 - The `SRGAN_1ch` model is a 3D SRGAN, designed for extracting features and predicting a focal region.
 - The `tFUSFormer_1ch` model is a 3D tFUSFormer, designed for extracting features and predicting a focal region.
-- The `tFUSFormer_1ch` model is a 3D tFUSFormer, designed for extracting features and predicting a focal region.
+- The `tFUSFormer_5ch` model is a 3D tFUSFormer, designed for extracting five physics features and predicting a focal region.
 - The architectures of all models are defined in `models.py`.
 
 ## Custom Loss Function
-The model uses a combined loss function (`new_combined_loss` in `utils.py`) incorporating MSE, weighted MSE, and weighted Dice loss to cater to the specific challenges in RFA thermal effect prediction.
+The model utilizes a combined loss function that incorporates MSE loss, IoU loss, and a distance function to mitigate specific challenges in tFUS focal volume prediction.
 
 ## Evaluation
-The model is evaluated based on Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and Dice Coefficient, providing a comprehensive assessment of its prediction accuracy.
+The model is evaluated based on the intersection over union (IoU) score and the distance between the maximum pressure points of the ground truth full-width at half maximum (FWHM) and the predicted FWHM of the focal volume, offering a comprehensive assessment of its prediction accuracy.
 
 ## Citation
 If you use this tool in your research, please cite the following paper:
-- [M. Shin, M. Seo, S.-S. Yoo, K. Yoon. "tFUSFormer: Physics-guided super-resolution Transformer for simulation of transcranial focused ultrasound propagation in brain stimulation." *Arxiv*](https://arxiv.org/abs/2312.13947)
+- [M. Shin, M. Seo, S.-S. Yoo, K. Yoon. "tFUSFormer: Physics-guided super-resolution Transformer for simulation of transcranial focused ultrasound propagation in brain stimulation."](TBD)
 - BibTeX formatted citation\
-@misc{shin2023physrfanet,\
-      title={{tFUSFormer}: {P}hysics-guided super-resolution {T}ransformer for simulation of transcranial focused ultrasound propagation in brain stimulation},\
+@misc{shin2024tfusformer,\
+      title={{tFUSFormer}: t{FUSF}ormer: {P}hysics-guided super-resolution {T}ransformer for simulation of transcranial focused ultrasound propagation in brain stimulation},\
       author={Minwoo Shin and Minjee Seo and Seung-Schik Yoo and and Kyungho Yoon},\
       year={2024},\
       eprint={},\
-      archivePrefix={arXiv},\
+      archivePrefix={},\
       primaryClass={},\
       doi={}
 }
-
+For the SE-SRResNet, please cite the following paper:
+- [M. Shin and Z. Peng and H.-J. Kim and S.-S. Yoo and K. Yoon. "Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation."](10.1016/j.cmpb.2023.107591)
+- BibTeX formatted citation\
+@article{shin2023,
+author = "Minwoo Shin and Zhuogang Peng and Hyo-Jin Kim and Seung-Schik Yoo and Kyungho Yoon",
+title = "{Multivariable-incorporating super-resolution residual network for transcranial focused ultrasound simulation}",
+year = {2023},
+volume = {237},
+pages = {107591},
+journal = {Comput. Meth. Programs Biomed.},
+doi = {10.1016/j.cmpb.2023.107591}
+}
 For the manifold discovery and analysis (MDA) analysis, please cite the following paper:
 - [Md Tauhidul Islam, Zixia Zhou, Hongyi Ren, Masoud Badiei Khuzani, Daniel Kapp, James Zou, Lu Tian, Joseph C. Liao and Lei Xing. 2023, "Revealing Hidden Patterns in Deep Neural Network Feature Space Continuum via Manifold Learning", Nature Communications, 14(1), p.8506.](https://www.nature.com/articles/s41467-023-43958-w)
 - BibTeX formatted citation\

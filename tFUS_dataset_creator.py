@@ -22,7 +22,7 @@ def load_data_for_index(i):
 def load_unforeseen_data_for_index(i):
     """Load data for a specific index and all prefixes."""
     unforeseen_data_for_i = []
-    for prefix in ['22']:#, '17', '22']:
+    for prefix in ['13']:#, '17']:
         unforeseen_data_for_i.append(load_unforeseen_data(prefix, i))
     return unforeseen_data_for_i
 
@@ -188,14 +188,13 @@ Vz_valid = scaler_Vzlow.transform(Vz_valid)
 Vz_test  = scaler_Vzlow.transform(Vz_test)
 
 # Save scalers for HR and LR pressure data to the HDF5 files
-save_scaler_to_hdf5(scaler_Phigh, f'{dir_data}/scaler_P_HR.hdf5', 'scaler_Phigh')
-save_scaler_to_hdf5(scaler_Plow,  f'{dir_data}/scaler_P_LR.hdf5', 'scaler_Plow')
-
-save_scaler_to_hdf5(scaler_Slow,  f'{dir_data}/scaler_S_LR.hdf5',  'scaler_Slow')
-save_scaler_to_hdf5(scaler_Vxlow, f'{dir_data}/scaler_Vx_LR.hdf5', 'scaler_Vxlow')
-save_scaler_to_hdf5(scaler_Vylow, f'{dir_data}/scaler_Vy_LR.hdf5', 'scaler_Vylow')
-save_scaler_to_hdf5(scaler_Vzlow, f'{dir_data}/scaler_Vz_LR.hdf5', 'scaler_Vzlow')
-print('scaler saved')
+#save_scaler_to_hdf5(scaler_Phigh, f'{dir_data}/scaler_P_HR.hdf5', 'scaler_Phigh')
+#save_scaler_to_hdf5(scaler_Plow,  f'{dir_data}/scaler_P_LR.hdf5', 'scaler_Plow')
+#save_scaler_to_hdf5(scaler_Slow,  f'{dir_data}/scaler_S_LR.hdf5',  'scaler_Slow')
+#save_scaler_to_hdf5(scaler_Vxlow, f'{dir_data}/scaler_Vx_LR.hdf5', 'scaler_Vxlow')
+#save_scaler_to_hdf5(scaler_Vylow, f'{dir_data}/scaler_Vy_LR.hdf5', 'scaler_Vylow')
+#save_scaler_to_hdf5(scaler_Vzlow, f'{dir_data}/scaler_Vz_LR.hdf5', 'scaler_Vzlow')
+#print('scaler saved')
 
 # Reshape the training data
 Phigh_train  = Phigh_train.reshape(N_train, 1, nx_high, ny_high, nz_high)

@@ -144,36 +144,6 @@ def dist_individual(targets, inputs):
     dist = torch.norm(ind1_unraveled.float() - ind2_unraveled.float(), p=2) / 2
     return dist.item()
 
-'''
-def iou_individual(targets, inputs): 
-    smooth = 1.0e-6
-    tmp_inputs  = np.zeros(inputs.shape)
-    tmp_targets = np.zeros(targets.shape)
-    #========================
-    # FWHM
-    #========================
-    tmp_inputs[inputs>=0.5*np.max(inputs)]   = 1
-    tmp_targets[targets>=0.5*np.max(inputs)] = 1
-
-    intersection = (tmp_inputs.flatten() * tmp_targets.flatten()).sum()
-    total = (tmp_inputs.flatten() + tmp_targets.flatten()).sum()
-    union = total - intersection
-    IoU = (intersection + smooth)/(union + smooth)
-    return IoU
-    
-def dist_individual(targets, inputs): 
-    #=========================================
-    # indices for argmax of inputs and targets
-    #=========================================
-    ind1 = np.unravel_index(np.argmax(inputs), inputs.shape)
-    ind2 = np.unravel_index(np.argmax(targets), targets.shape)
-    ind1 = np.array([ind1[0], ind1[1], ind1[2]])
-    ind2 = np.array([ind2[0], ind2[1], ind2[2]])
-    #print('argmax of inputs',ind1)
-    dist = np.linalg.norm(ind1-ind2)/2
-    return dist
-'''
-
 for sample in range(N_test):
     LR_slice = rescaled_LR[sample,:,12,:]
     SR_slice = rescaled_SR[sample,:,50,:]

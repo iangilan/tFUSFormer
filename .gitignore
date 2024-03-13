@@ -7,3 +7,8 @@ model
 *.png
 *.npy
 *.txt
+/test_results
+indexed_saveplot.py
+indexed_saveplot_fwhm.py
+indexing.py
+

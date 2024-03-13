@@ -144,7 +144,7 @@ for index, row in significant_pairs_sorted.iterrows():
         y_pos_annotation += 3  # Adjust spacing as needed
 
 
-ax.set_title('Comparison of IoU Scores Across Models')
+#ax.set_title('Comparison of IoU Scores Across Models')
 ax.set_ylabel('IoU Score (%)')
 ax.set_xlabel('')
 

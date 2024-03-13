@@ -20,7 +20,8 @@ To set up the project environment:
 
 ## Dataset
 The dataset used in this project consists of:
-- Due to the huge size of the training dataset, we only included the pre-trained models and test datasets.
+- You can download training, validation, and test datasets from [here](https://zenodo.org/uploads/10791265).
+- Due to privacy concerns, CT images are excluded.
 
 ## Usage
 1. Locate your test dataset in your local storage.

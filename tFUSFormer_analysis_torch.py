@@ -36,7 +36,7 @@ model_name = f"{class_path}".replace('s.', '_')
 print("Model name = ",model_name)
 print("Test dataset type = ", config.test_data_mode)
 
-model.load_state_dict(torch.load('checkpoint.pt'))
+model.load_state_dict(torch.load(f'{model_path}/{model_name}.pth'))
 model.eval()
 
 def load_scaler_from_hdf5(filepath, scaler_name):
@@ -144,7 +144,7 @@ inter_out_pca = pca.fit_transform(inter_out)
 print(inter_out_pca.shape)
 
 # Save the PCA-transformed features
-np.save('../mda/results/tFUSFormer5ch_feature_test.npy', inter_out)
+np.save('../mda/tFUSFormer5ch_feature_test.npy', inter_out)
 
 
 # For the tasks below, five datasets analysed in the manuscript will be automatically loaded. 
@@ -181,13 +181,13 @@ FS = 16
 neighborNum = 5
 
 # Load feature data extracted by the SRGAN at umsampling block from test images
-testDataFeatures = np.load('../mda/results/tFUSFormer5ch_feature_test.npy')
+testDataFeatures = np.load('../mda/tFUSFormer5ch_feature_test.npy')
 # Load data labels (target high resolution images) corresponding to low resolution test images
-Y = np.load('../data/SR/y_test.npy')
+Y = np.load(f"test_results/{model_name}_unseen1/HR.npy")
 # Reshape the target images into vectors so that they can be analyzed by MDA 
 Y = Y.reshape(Y.shape[0],-1)
-# Load output images prediced by the SRGAN
-Y_pred = np.load('../data/SR/y_test_pred_trained.npy')
+# Load output images prediced by the network
+Y_pred = np.load(f"test_results/{model_name}_unseen1/SR.npy")
 # Reshape the predicted output images into vectors so that they can be analyzed by MDA 
 Y_pred = Y_pred.reshape(Y_pred.shape[0],-1)
 
@@ -204,4 +204,4 @@ plt.scatter(Yreg[:,0],Yreg[:,1],c=clusterIdx.T, cmap='jet', s=5)
 plt.xlabel("MDA1")
 plt.ylabel("MDA2")
 plt.title('MDA visualization of the SRGAN features for superresolution task')
-'''
+

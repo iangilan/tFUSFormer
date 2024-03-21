@@ -23,6 +23,9 @@ The dataset used in this project consists of:
 - You can download training, validation, and test datasets from [here](https://zenodo.org/uploads/10791265).
 - Due to privacy concerns, CT images are excluded.
 
+## Pre-trained model
+You can download the pre-trained models from [here](https://drive.google.com/drive/u/1/folders/1jtnmlbGqD_9zAyIBLx4SNvGik_OzvVsk).
+
 ## Usage
 1. Locate your test dataset in your local storage.
 2. Edit config.py according to the user's need.

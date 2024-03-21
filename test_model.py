@@ -183,7 +183,7 @@ for sample in range(N_test):
     # Set the file path with the folder path variable included
     file_path2 = os.path.join(folder_path, 'sample%d.jpg' %sample)
     # Save the figure with the specified file path
-    plt.savefig(file_path2, dpi=600, bbox_inches='tight', pad_inches=0)
+    #plt.savefig(file_path2, dpi=600, bbox_inches='tight', pad_inches=0)
 iou_mean = np.mean(IoU_vec)
 iou_median = np.median(IoU_vec)
 dist_mean = np.mean(dist_vec)
@@ -195,7 +195,7 @@ print('=================================================')
 print('dist_mean for N_test cases   = ',dist_mean)
 print('dist_median for N_test cases = ',dist_median)
 print('=================================================') 
-
+'''
 #=========================================
 # Create the folder if it does not exist
 folder_path1 = f'test_results/{model_name}_{test_data_mode}/'
@@ -223,10 +223,6 @@ with open(file_path4, 'w') as file:
     for value in IoU_vec:
         file.write(str(value) + '\n')
         
-np.save(folder_path1 + 'LR.npy', rescaled_LR)
-np.save(folder_path1 + 'SR.npy', rescaled_SR)
-np.save(folder_path1 + 'HR.npy', rescaled_HR)        
-
 np.save(folder_path1 + 'LR.npy', rescaled_LR)
 np.save(folder_path1 + 'SR.npy', rescaled_SR)
 np.save(folder_path1 + 'HR.npy', rescaled_HR)
@@ -269,3 +265,4 @@ with open(file_path5, 'w') as f:
     print('=================================================', file=f)
     print('Inference time = ', inference_time, file=f)
     print('=================================================', file=f) 
+'''    

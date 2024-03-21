@@ -43,10 +43,6 @@ elif test_data_mode == 'unseen1':
     unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk13_ds.hdf5')
 elif test_data_mode == 'unseen2':
     unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk17_ds.hdf5')
-elif test_data_mode == 'unseen3':
-    unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_sk22_ds.hdf5')
-elif test_data_mode == 'unseen':
-    unforeseen_test_ds = tFUSDataset(f'{dir_data}/unforeseen_test_all3_ds.hdf5')
 else:
     print("Invalid test_data_mode value or dataset not found.")
 

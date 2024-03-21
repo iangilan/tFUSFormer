@@ -9,11 +9,9 @@ alpha = 0.999
 
 # Configuration variable for the test dataset mode
 # seen:    foreseen test dataset
-# unseen:  unseen test dataset 1, 2, and 3
 # unseen1: unseen test dataset 1
 # unseen2: unseen test dataset 2
-# unseen3: unseen test dataset 3
-test_data_mode = 'unseen'  # 'seen', 'unseen', 'unseen1', 'unseen2', or 'unseen3' for the test dataset
+test_data_mode = 'seen'  # 'seen', 'unseen1', or 'unseen2' for the test dataset
 
 # Upsample methods
 upsample_methods = {
